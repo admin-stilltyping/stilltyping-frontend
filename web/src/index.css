@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Operator-console dashboard theme (scoped to .nivaso-dash so it
+ * never touches the light admin shell that shares this stylesheet).
+ * ------------------------------------------------------------------ */
+.nivaso-dash {
+  color-scheme: dark;
+  /* faint dotted plane — reads as a telemetry grid, not decoration */
+  background-color: #0b0d13;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 0);
+  background-size: 22px 22px;
+  background-position: -1px -1px;
+}
+
+.nivaso-dash ::selection {
+  background: rgba(139, 123, 240, 0.35);
+}
+
+/* HUD panel corner brackets — the signature chrome, reserved for the hero */
+.dash-bracket {
+  position: relative;
+}
+.dash-bracket::before,
+.dash-bracket::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: rgba(139, 123, 240, 0.55);
+  border-style: solid;
+  pointer-events: none;
+}
+.dash-bracket::before {
+  top: 10px;
+  left: 10px;
+  border-width: 1.5px 0 0 1.5px;
+}
+.dash-bracket::after {
+  bottom: 10px;
+  right: 10px;
+  border-width: 0 1.5px 1.5px 0;
+}
+
+/* thin scanning highlight for "live" strips */
+.dash-scanline {
+  position: relative;
+  overflow: hidden;
+}
+.dash-scanline::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(52, 209, 201, 0.08),
+    transparent
+  );
+  animation: dash-sweep 2.4s ease-in-out infinite;
+}
+
+/* slim custom scrollbars inside dark panels */
+.nivaso-dash .dash-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.nivaso-dash .dash-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+}
+.nivaso-dash .dash-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nivaso-dash *,
+  .nivaso-dash *::before,
+  .nivaso-dash *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
