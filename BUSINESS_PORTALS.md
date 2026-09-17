@@ -33,6 +33,26 @@ subdomains, and reverse-proxy routes for `/auth`, `/admin` and `/web`. Set
 `VITE_WEB_URL=https://example.com` for admin and
 `VITE_TENANT_BASE_DOMAIN=example.com` for web. Do not include secrets in VITE variables.
 
+### Vercel production
+
+Deploy this repository as two Vite projects, with root directories `web` and
+`admin`, build command `npm run build`, and output directory `dist`. Include source
+files outside each root directory so the shared workspace packages are available.
+
+- Business portal domain: `*.stilltyping.in`. Set
+  `VITE_TENANT_BASE_DOMAIN=stilltyping.in` and
+  `VITE_ADMIN_URL=https://superadmin.stilltyping.in`.
+- Super-admin domain: `superadmin.stilltyping.in`. Set
+  `VITE_WEB_URL=https://stilltyping.in` so business links use the correct suffix.
+- Keep `VITE_API_BASE_URL` unset or empty in both projects. Their `vercel.json`
+  files proxy API requests to `https://project-u7ai2-seven.vercel.app` before the
+  SPA fallback. This avoids cross-origin API requests. Rewrite caching is disabled
+  so authenticated responses are not stored by the proxy.
+- Deploy the separate landing-page repository at `stilltyping.in`.
+
+Rebuild after changing any `VITE_` setting. If the backend URL changes, update both
+Vercel configuration files and redeploy.
+
 Backend code and migration are in `context-agent/src/super_admin/businesses` and
 `migrations/versions/007_businesses.py`. If the initial password is lost, run in the
 backend repository:

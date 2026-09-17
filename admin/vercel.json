@@ -1,5 +1,17 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
+    { "source": "/auth/:path*", "destination": "https://project-u7ai2-seven.vercel.app/auth/:path*" },
+    { "source": "/admin/:path*", "destination": "https://project-u7ai2-seven.vercel.app/admin/:path*" },
+    { "source": "/super-admin/:path*", "destination": "https://project-u7ai2-seven.vercel.app/super-admin/:path*" },
+    { "source": "/health", "destination": "https://project-u7ai2-seven.vercel.app/health" },
+    { "source": "/module-catalog", "destination": "https://project-u7ai2-seven.vercel.app/module-catalog" },
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [{ "key": "x-vercel-enable-rewrite-caching", "value": "0" }]
+    }
   ]
 }
