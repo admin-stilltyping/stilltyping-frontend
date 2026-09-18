@@ -9,16 +9,16 @@ interface TicketListResponse {
 export const supportApi = {
   list: (slug: string, params?: ListTicketsParams) =>
     apiClient
-      .get<TicketListResponse>(`/api/v1/tenants/${slug}/support-tickets`, { params })
+      .get<TicketListResponse>(`/admin/${slug}/support-tickets`, { params })
       .then((r) => r.data.tickets),
 
   get: (slug: string, reference: string) =>
     apiClient
-      .get<SupportTicket>(`/api/v1/tenants/${slug}/support-tickets/${reference}`)
+      .get<SupportTicket>(`/admin/${slug}/support-tickets/${reference}`)
       .then((r) => r.data),
 
   update: (slug: string, reference: string, payload: UpdateTicketPayload) =>
     apiClient
-      .patch<SupportTicket>(`/api/v1/tenants/${slug}/support-tickets/${reference}`, payload)
+      .patch<SupportTicket>(`/admin/${slug}/support-tickets/${reference}`, payload)
       .then((r) => r.data),
 }
