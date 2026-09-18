@@ -1,424 +1,206 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
-import { Send, Bot, User, RefreshCw, Plus, MessageSquare } from 'lucide-react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { chatApi } from '@/api/chat'
-import { modelsApi } from '@/api/models'
+import { useEffect, useRef, useState } from 'react'
+import { useInfiniteQuery, useIsMutating, useMutation, useQueryClient, type InfiniteData } from '@tanstack/react-query'
+import { useSearchParams } from 'react-router-dom'
+import { BookOpen, Bot, History, MessageSquare, Plus, RefreshCw, Send, User } from 'lucide-react'
+import { Button, Modal } from '@nivaso/ui'
+import { Flag } from '@nivaso/types'
+import { agentChatApi } from '@/api/agentChat'
+import { InlineLoading, Skeleton } from '@/components/ui/LoadingState'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
-import { Button, Select } from '@nivaso/ui'
-import { cn } from '@/utils/cn'
-import type { SessionOut } from '@/types/chat'
-import { Flag, flagArray } from '@nivaso/types'
 import { useEntitlementStore } from '@/store/entitlementStore'
+import type { AgentHistory, AgentReply, AgentSession } from '@/types/agentChat'
+import { apiError } from '@/utils/apiError'
+import { cn } from '@/utils/cn'
 import { formatDate } from '@/utils/formatters'
 
-interface DisplayMessage {
-  role: 'user' | 'assistant'
-  content: string
-  modelUsed?: string
-  toolsUsed?: string[]
-  channelLatencyMs?: number | null
-  fromHistory?: boolean
+const isSessionId = (value: string | null): value is string => Boolean(value && /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(value))
+
+function ChatLoading({ history = false }: { history?: boolean }) {
+  return <div role="status" aria-label={history ? 'Loading conversation' : 'Loading conversations'} className="space-y-4 p-3">
+    <span className="sr-only">{history ? 'Loading conversation…' : 'Loading conversations…'}</span>
+    {[0, 1, 2].map(i => <div key={i} className={cn('space-y-2', history && i === 1 && 'ml-auto w-3/4')}>
+      <Skeleton className={history ? 'h-16 w-5/6' : 'h-4 w-4/5'} />
+      <Skeleton className="h-3 w-1/2" />
+    </div>)}
+  </div>
 }
 
-function parseModel(value: string): { provider?: 'anthropic' | 'gemini' | 'groq'; model?: string } {
-  if (!value) return {}
-  const [rawProvider, model] = value.split('::')
-  const provider = (['anthropic', 'gemini', 'groq'] as const).find((p) => p === rawProvider)
-  return { provider, model }
+function ChatWorkspace({ slug }: { slug: string }) {
+  const [search, setSearch] = useSearchParams()
+  const [draftId] = useState(() => crypto.randomUUID())
+  const candidate = search.get('session')
+  const sessionId = isSessionId(candidate) ? candidate : draftId
+  const [historyOpen, setHistoryOpen] = useState(false)
+  const busy = useIsMutating({ mutationKey: ['agent-chat-send', slug] }) > 0
+  const sessions = useInfiniteQuery({
+    queryKey: ['agent-chat-sessions', slug],
+    initialPageParam: 0,
+    queryFn: ({ pageParam }) => agentChatApi.sessions(slug, pageParam),
+    getNextPageParam: page => page.next_offset,
+    staleTime: 30_000,
+    retry: 1,
+  })
+  const allSessions = sessions.data?.pages.flatMap(page => page.sessions) ?? []
+  const activeSession = allSessions.find(item => item.session_id === sessionId)
+
+  function selectSession(id: string) {
+    if (busy) return
+    setSearch({ session: id })
+    setHistoryOpen(false)
+  }
+
+  const sessionList = <>
+    <Button variant="secondary" className="mb-4 w-full justify-center" onClick={() => selectSession(crypto.randomUUID())} disabled={busy}>
+      <Plus size={16} />New conversation
+    </Button>
+    {sessions.isPending ? <ChatLoading /> : sessions.isError ? <div role="alert" className="space-y-2 p-2 text-sm text-red-700">
+      <p>{apiError(sessions.error, 'Conversations could not be loaded.')}</p>
+      <button className="font-medium underline" onClick={() => void sessions.refetch()}>Try again</button>
+    </div> : <>
+      {!activeSession && <div aria-current="page" className="mb-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-3 text-sm font-medium text-blue-700">New conversation<span className="mt-1 block text-xs font-normal text-blue-600">Saved after your first reply</span></div>}
+      {allSessions.length > 0 && <nav aria-label="Saved conversations" className="space-y-1">
+        {allSessions.map(item => <button key={item.session_id} disabled={busy}
+          aria-current={item.session_id === sessionId ? 'page' : undefined}
+          onClick={() => selectSession(item.session_id)}
+          className={cn('w-full rounded-lg px-3 py-3 text-left focus-visible:outline-blue-600 disabled:opacity-60', item.session_id === sessionId ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50')}>
+          <span className="block truncate text-sm font-medium">{item.title}</span>
+          <span className="mt-1 block text-xs text-gray-500">{formatDate(item.updated_at)}</span>
+        </button>)}
+      </nav>}
+      {sessions.hasNextPage && <Button variant="ghost" size="sm" className="mt-2 w-full justify-center" loading={sessions.isFetchingNextPage} disabled={busy} onClick={() => void sessions.fetchNextPage()}>Load more conversations</Button>}
+    </>}
+  </>
+
+  return <div className="flex h-full min-h-0 min-w-0 gap-4">
+    <aside aria-label="Conversation history" className="hidden w-60 shrink-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white lg:flex">
+      <h2 className="border-b border-gray-100 px-4 py-4 text-sm font-semibold text-gray-800">Conversations</h2>
+      <div className="min-h-0 flex-1 overflow-y-auto p-3">{sessionList}</div>
+    </aside>
+    <Conversation key={`${slug}:${sessionId}`} slug={slug} sessionId={sessionId} session={activeSession}
+      onOpenHistory={() => setHistoryOpen(true)} onStart={() => setSearch({ session: sessionId }, { replace: true })} />
+    <Modal title="Conversations" open={historyOpen} onClose={() => setHistoryOpen(false)}>
+      <div className="max-h-[65dvh] overflow-y-auto">{sessionList}</div>
+    </Modal>
+  </div>
 }
 
-function newUserId() {
-  return `session-${Date.now()}`
-}
-
-// ── Session card ──────────────────────────────────────────────────────────────
-
-function SessionCard({
-  s,
-  active,
-  onClick,
-}: {
-  s: SessionOut
-  active: boolean
-  onClick: () => void
+function Conversation({ slug, sessionId, session, onOpenHistory, onStart }: {
+  slug: string; sessionId: string; session?: AgentSession; onOpenHistory: () => void; onStart: () => void
 }) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        'w-full rounded-lg px-3 py-2.5 text-left transition-colors',
-        active
-          ? 'bg-blue-50 ring-1 ring-blue-200'
-          : 'hover:bg-gray-50',
-      )}
-    >
-      <div className="flex items-center gap-2">
-        <div
-          className={cn(
-            'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold',
-            active ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600',
-          )}
-        >
-          {(s.customer_name ?? s.user_id).charAt(0).toUpperCase()}
-        </div>
-        <div className="min-w-0 flex-1">
-          <p
-            className={cn(
-              'truncate text-sm font-medium',
-              active ? 'text-blue-700' : 'text-gray-800',
-            )}
-          >
-            {s.customer_name ?? s.user_id}
-          </p>
-          {s.customer_name && (
-            <p className="truncate text-xs text-gray-400">{s.user_id}</p>
-          )}
-        </div>
-      </div>
-      {s.last_message_at && (
-        <p className="mt-1 text-right text-xs text-gray-400">
-          {formatDate(s.last_message_at)}
-        </p>
-      )}
-    </button>
-  )
-}
-
-// ── Main component ────────────────────────────────────────────────────────────
-
-export function ChatTest() {
-  const selectedBusinessSlug = useTenantSlug()
   const qc = useQueryClient()
-  const [userId, setUserId] = useState(newUserId)
-  const [selectedModel, setSelectedModel] = useState('')
-
-  // Fetch all platform models from the backend, then filter by plan entitlement.
-  const entitlements = useEntitlementStore((s) => s.entitlements)
-  const { data: allModels = [] } = useQuery({
-    queryKey: ['models', selectedBusinessSlug],  // re-fetch when business changes
-    queryFn: modelsApi.list,
-    staleTime: 0,                                // always fresh — must stay in sync with entitlement model IDs
-  })
-
-  const safeAllModels = Array.isArray(allModels) ? allModels : []
-  const allowedModelIds = flagArray(entitlements, Flag.AI_MODELS)
-  const availableModels = allowedModelIds === null
-    ? safeAllModels
-    : safeAllModels.filter((m) => allowedModelIds.includes(m.model))
-  // Declare safeModels before the useEffect that references it in its dep array.
-  const safeModels = Array.isArray(availableModels) ? availableModels : []
-  const modelSelectOptions = safeModels.map((m) => ({
-    value: `${m.provider}::${m.model}`,
-    label: m.label,
-  }))
-
-  // Auto-select the first plan-allowed model once the list loads.
-  // Also reset if the current selection is no longer in the allowed list
-  // (e.g. after switching to a business on a different plan).
-  useEffect(() => {
-    if (safeModels.length === 0) return
-    const isStillAllowed = safeModels.some(
-      (m) => `${m.provider}::${m.model}` === selectedModel,
-    )
-    if (!selectedModel || !isStillAllowed) {
-      const first = safeModels[0]
-      setSelectedModel(`${first.provider}::${first.model}`)
-    }
-  }, [safeModels, selectedModel])
-  const [messages, setMessages] = useState<DisplayMessage[]>([])
+  const historyKey = ['agent-chat-history', slug, sessionId]
   const [input, setInput] = useState('')
-  const bottomRef = useRef<HTMLDivElement>(null)
-  const slug = selectedBusinessSlug || undefined
-
-  // ── Sessions list ────────────────────────────────────────────────────────
-
-  const { data: sessions = [], isLoading: sessionsLoading } = useQuery({
-    queryKey: ['chat-sessions', slug],
-    queryFn: () => chatApi.sessions({ business_slug: slug }),
-    staleTime: 10_000,
-  })
-
-  // ── Conversation history ─────────────────────────────────────────────────
-
-  const { data: history, isLoading: historyLoading } = useQuery({
-    queryKey: ['chat-history', userId, slug],
-    queryFn: () => chatApi.history({ user_id: userId, business_slug: slug }),
-    enabled: !!userId,
-    staleTime: 0,
+  const [attempt, setAttempt] = useState<{ request_id: string; message: string } | null>(null)
+  const [lastReply, setLastReply] = useState<AgentReply | null>(null)
+  const scroller = useRef<HTMLDivElement>(null)
+  const composer = useRef<HTMLTextAreaElement>(null)
+  const supportEnabled = useEntitlementStore(s => s.can(Flag.SUPPORT_TICKETS))
+  const send = useMutation({
+    mutationKey: ['agent-chat-send', slug],
+    mutationFn: (value: { request_id: string; message: string }) => agentChatApi.send(slug, { session_id: sessionId, ...value }),
     retry: false,
-  })
-
-  useEffect(() => {
-    setMessages(
-      (history ?? []).map((m) => ({
-        role: m.role,
-        content: m.content,
-        fromHistory: true,
-      })),
-    )
-  }, [history])
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
-
-  // ── Send message ─────────────────────────────────────────────────────────
-
-  const { mutate: send, isPending } = useMutation({
-    mutationFn: chatApi.send,
-    onSuccess: (data) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: 'assistant',
-          content: data.reply,
-          modelUsed: data.model_used,
-          toolsUsed: data.tools_used.map((t) => t.tool),
-          channelLatencyMs: data.channel_latency_ms,
-        },
-      ])
-      // Refresh sessions list so new sessions / last_message_at updates appear
-      qc.invalidateQueries({ queryKey: ['chat-sessions', slug] })
+    onSuccess: reply => {
+      const ids = new Set(reply.messages.map(item => item.id))
+      qc.setQueryData<InfiniteData<AgentHistory>>(historyKey, previous => {
+        const pages = previous?.pages ?? [{ messages: [], next_before: null }]
+        return {
+          pageParams: previous?.pageParams ?? [null],
+          pages: pages.map((page, index) => ({ ...page, messages: [...page.messages.filter(item => !ids.has(item.id)), ...(index === 0 ? reply.messages : [])].sort((a, b) => a.seq - b.seq) })),
+        }
+      })
+      setLastReply(reply)
+      setInput('')
+      setAttempt(null)
+      void qc.invalidateQueries({ queryKey: ['agent-chat-sessions', slug] })
     },
   })
+  const history = useInfiniteQuery({
+    queryKey: historyKey,
+    initialPageParam: null as number | null,
+    queryFn: ({ pageParam }) => agentChatApi.history(slug, sessionId, pageParam),
+    getNextPageParam: page => page.next_before,
+    refetchOnWindowFocus: false,
+    retry: 1,
+  })
+  const messages = history.data?.pages.slice().reverse().flatMap(page => page.messages) ?? []
+  const lastId = messages[messages.length - 1]?.id
+  useEffect(() => {
+    if (scroller.current) scroller.current.scrollTop = scroller.current.scrollHeight
+  }, [lastId, send.isPending])
+  useEffect(() => {
+    if (send.isSuccess || send.isError) composer.current?.focus()
+  }, [send.isSuccess, send.isError])
 
-  const handleSend = useCallback(() => {
-    const text = input.trim()
-    if (!text || isPending) return
-    const { provider, model } = parseModel(selectedModel)
-    setMessages((prev) => [...prev, { role: 'user', content: text }])
-    setInput('')
-    send({
-      message: text,
-      user_id: userId,
-      business_slug: slug,
-      provider,
-      model,
-      admin_mode: true,
-    })
-  }, [input, isPending, selectedModel, userId, slug, send])
+  function submit() {
+    const message = input.trim()
+    if (!message || send.isPending || history.isPending || history.isError) return
+    const next = attempt?.message === message ? attempt : { request_id: crypto.randomUUID(), message }
+    setAttempt(next)
+    onStart()
+    send.mutate(next)
+  }
 
-  // Select an existing session
-  const handleSelectSession = useCallback((uid: string) => {
-    setUserId(uid)
-    setMessages([])
-  }, [])
+  const refresh = () => {
+    void history.refetch()
+    void qc.invalidateQueries({ queryKey: ['agent-chat-sessions', slug] })
+  }
 
-  // Start a fresh session — the backend tags all admin_mode sessions as test
-  // customers regardless of user_id, so the frontend can use any stable ID.
-  const handleNewSession = useCallback(() => {
-    setUserId(newUserId())
-    setMessages([])
-    setInput('')
-  }, [])
-
-  // ── Render ───────────────────────────────────────────────────────────────
-
-  return (
-    <div className="flex h-full gap-3 overflow-hidden">
-      {/* ── Sessions sidebar ── */}
-      <aside className="flex w-64 shrink-0 flex-col gap-2 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-gray-100 px-3 py-2.5">
-          <span className="text-sm font-semibold text-gray-700">Sessions</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleNewSession}
-            title="Start a new session"
-          >
-            <Plus className="h-4 w-4" />
-            New
-          </Button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-2 pb-2">
-          {sessionsLoading && (
-            <p className="py-4 text-center text-xs text-gray-400">Loading…</p>
-          )}
-
-          {!sessionsLoading && sessions.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <MessageSquare className="mb-2 h-8 w-8 text-gray-300" />
-              <p className="text-xs text-gray-400">No sessions yet.</p>
-              <p className="text-xs text-gray-400">Send a message to create one.</p>
-            </div>
-          )}
-
-          <div className="space-y-1">
-            {sessions.map((s) => (
-              <SessionCard
-                key={s.user_id}
-                s={s}
-                active={s.user_id === userId}
-                onClick={() => handleSelectSession(s.user_id)}
-              />
-            ))}
+  return <section aria-label="Agent conversation" className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white">
+    <header className="flex shrink-0 items-center gap-3 border-b border-gray-100 px-4 py-3 sm:px-5">
+      <button aria-label="Show conversations" disabled={send.isPending} onClick={onOpenHistory} className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 lg:hidden"><History size={19} /></button>
+      <div className="min-w-0 flex-1"><h2 className="truncate text-sm font-semibold text-gray-900">{session?.title || 'New conversation'}</h2><p className="mt-0.5 text-xs text-gray-500">Your business knowledge and AI instructions</p></div>
+      <button aria-label="Refresh conversation" title="Refresh conversation" disabled={send.isPending || history.isFetching} onClick={refresh} className="shrink-0 rounded-lg p-2 text-gray-500 hover:bg-gray-100 disabled:opacity-40"><RefreshCw size={17} className={history.isFetching ? 'motion-safe:animate-spin' : ''} /></button>
+    </header>
+    <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6">
+      {history.isPending ? <ChatLoading history /> : history.isError ? <div role="alert" className="space-y-3 rounded-lg bg-red-50 p-4 text-sm text-red-700">
+        <p>{apiError(history.error, 'This conversation could not be loaded.')}</p><button onClick={refresh} className="font-medium underline">Try again</button>
+      </div> : <>
+        {history.hasNextPage && <div className="mb-5 text-center"><Button variant="ghost" size="sm" loading={history.isFetchingNextPage} onClick={() => void history.fetchNextPage()}>Load earlier messages</Button></div>}
+        {messages.length === 0 && !send.isPending && <div className="mx-auto flex min-h-full max-w-lg flex-col justify-center py-6">
+          <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600"><Bot size={23} /></div>
+          <h3 className="text-lg font-semibold text-gray-900">Try your business assistant</h3>
+          <p className="mt-2 text-sm leading-relaxed text-gray-500">Ask about information in your knowledge base or check how your assistant follows your instructions.</p>
+          <div className="mt-5 space-y-2">
+            {['What can you help customers with?', 'Explain our services using the information you have.'].map(prompt => <button key={prompt} className="flex w-full items-start gap-2 rounded-lg border border-gray-200 px-3 py-3 text-left text-sm text-gray-700 hover:border-blue-300 hover:bg-blue-50/50" onClick={() => { setInput(prompt); composer.current?.focus() }}><MessageSquare size={16} className="mt-0.5 shrink-0 text-blue-600" />{prompt}</button>)}
           </div>
-
-          {/* Current session might not be in the list yet (no message sent) */}
-          {userId && !sessions.find((s) => s.user_id === userId) && (
-            <div className="mt-1">
-              <SessionCard
-                s={{
-                  user_id: userId,
-                  customer_name: null,
-                  conversation_id: null,
-                  last_message_at: null,
-                }}
-                active
-                onClick={() => {}}
-              />
-            </div>
-          )}
+          <details className="mt-5 text-xs leading-relaxed text-gray-500"><summary className="cursor-pointer font-medium text-gray-700">What can I do here?</summary><ul className="mt-2 list-disc space-y-1 pl-4"><li>Ask questions using your business knowledge base.</li><li>Check your AI instructions and continue saved conversations.</li>{supportEnabled && <li>Escalate unanswered questions to a real support ticket.</li>}<li>Text messages only. Appointment booking and order creation are not available in this chat.</li></ul></details>
+        </div>}
+        <div role="log" aria-label="Messages" aria-live="polite" aria-relevant="additions" className="space-y-5">
+          {messages.map(message => <MessageBubble key={message.id} role={message.role} content={message.content}>
+            {lastReply?.messages[lastReply.messages.length - 1]?.id === message.id && <>
+              {lastReply.support_ticket && <p className="mt-2 text-xs text-gray-500">Support ticket created: <a className="font-medium text-blue-600 underline" href={`/support/${encodeURIComponent(lastReply.support_ticket)}`}>{lastReply.support_ticket}</a></p>}
+              {lastReply.knowledge_units.length > 0 && <details className="mt-2 text-xs text-gray-500"><summary className="cursor-pointer">Knowledge used ({lastReply.knowledge_units.length})</summary><ul className="mt-1 space-y-1">{lastReply.knowledge_units.map(unit => <li key={unit.id} className="flex items-start gap-1"><BookOpen size={12} className="mt-0.5 shrink-0" />{unit.title}</li>)}</ul></details>}
+            </>}
+          </MessageBubble>)}
+          {send.isPending && attempt && <><MessageBubble role="user" content={attempt.message} /><InlineLoading label="Preparing a reply…" className="pl-2" /></>}
         </div>
-      </aside>
-
-      {/* ── Chat area ── */}
-      <div className="flex min-w-0 flex-1 flex-col gap-3 overflow-hidden">
-        {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-2 shadow-sm">
-          {/* Active business indicator */}
-          <div className="flex flex-col gap-0.5">
-            <label className="text-xs font-medium text-gray-500">Business</label>
-            <span className="rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs font-mono text-gray-700">
-              {slug || <span className="text-gray-400">not selected</span>}
-            </span>
-          </div>
-
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <label className="text-xs font-medium text-gray-500">Session ID</label>
-            <input
-              value={userId}
-              onChange={(e) => handleSelectSession(e.target.value)}
-              className="min-w-0 rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="web-tester"
-            />
-          </div>
-
-          <div className="flex min-w-[180px] flex-col gap-0.5">
-            <div className="flex items-center gap-1.5">
-              <label className="text-xs font-medium text-gray-500">Model</label>
-              {entitlements && (
-                <span className="rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-600 capitalize">
-                  {entitlements.plan} · {safeModels.length} available
-                </span>
-              )}
-            </div>
-            <Select
-              options={modelSelectOptions}
-              value={selectedModel}
-              onChange={(e) => setSelectedModel(e.target.value)}
-            />
-          </div>
-
-          <div className="flex items-end">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => {
-                qc.invalidateQueries({ queryKey: ['chat-history', userId, slug] })
-                qc.invalidateQueries({ queryKey: ['chat-sessions', slug] })
-              }}
-              title="Reload history from server"
-            >
-              <RefreshCw className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-
-        {/* Message list */}
-        <div className="flex-1 overflow-y-auto rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          {historyLoading && (
-            <p className="py-4 text-center text-sm text-gray-400">Loading history…</p>
-          )}
-
-          {!historyLoading && messages.length === 0 && (
-            <p className="py-8 text-center text-sm text-gray-400">
-              {sessions.find((s) => s.user_id === userId)
-                ? 'No messages in this session yet.'
-                : 'Send a message to start a new session.'}
-            </p>
-          )}
-
-          {messages.map((m, i) => (
-            <div
-              key={i}
-              className={cn(
-                'mb-4 flex gap-3',
-                m.role === 'user' ? 'flex-row-reverse' : 'flex-row',
-              )}
-            >
-              <div
-                className={cn(
-                  'flex h-8 w-8 shrink-0 items-center justify-center rounded-full',
-                  m.role === 'user' ? 'bg-blue-600' : 'bg-gray-200',
-                )}
-              >
-                {m.role === 'user' ? (
-                  <User className="h-4 w-4 text-white" />
-                ) : (
-                  <Bot className="h-4 w-4 text-gray-600" />
-                )}
-              </div>
-
-              <div className="max-w-[75%]">
-                <div
-                  className={cn(
-                    'rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
-                    m.role === 'user'
-                      ? 'rounded-tr-sm bg-blue-600 text-white'
-                      : 'rounded-tl-sm bg-gray-100 text-gray-800',
-                    m.fromHistory && 'opacity-80',
-                  )}
-                >
-                  {m.content}
-                </div>
-
-                {(m.modelUsed || (m.toolsUsed && m.toolsUsed.length > 0) || m.channelLatencyMs != null) && (
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {m.modelUsed && (
-                      <span className="rounded-full bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-600">
-                        {m.modelUsed}
-                      </span>
-                    )}
-                    {m.channelLatencyMs != null && (
-                      <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
-                        {m.channelLatencyMs < 1000
-                          ? `${m.channelLatencyMs}ms`
-                          : `${(m.channelLatencyMs / 1000).toFixed(1)}s`}
-                      </span>
-                    )}
-                    {m.toolsUsed?.map((t) => (
-                      <span
-                        key={t}
-                        className="rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-700"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-          <div ref={bottomRef} />
-        </div>
-
-        {/* Input */}
-        <div className="flex gap-2">
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-            placeholder="Type a message… (Enter to send)"
-            className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          />
-          <Button onClick={handleSend} loading={isPending} disabled={!input.trim()}>
-            <Send className="h-4 w-4" />
-            Send
-          </Button>
-        </div>
-      </div>
+      </>}
     </div>
-  )
+    <form onSubmit={event => { event.preventDefault(); submit() }} className="shrink-0 space-y-2 border-t border-gray-100 bg-white p-3 sm:px-5 sm:py-4">
+      {send.isError && <div role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-xs leading-relaxed text-red-700">{apiError(send.error, 'A reply could not be confirmed.')} Your message is kept below. Send it again to retry, or refresh to check the saved reply.</div>}
+      <div className="flex items-end gap-2 rounded-xl border border-gray-300 p-2 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+        <label htmlFor="agent-message" className="sr-only">Message your assistant</label>
+        <textarea ref={composer} id="agent-message" rows={2} maxLength={4000} value={input} disabled={send.isPending}
+          onChange={event => { setInput(event.target.value); if (send.isError) send.reset() }}
+          onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); submit() } }}
+          placeholder="Ask your business assistant…"
+          className="max-h-32 min-w-0 flex-1 resize-none bg-transparent px-2 py-1 text-sm leading-relaxed text-gray-800 outline-none placeholder:text-gray-400 disabled:opacity-60" />
+        <Button type="submit" aria-label="Send message" loading={send.isPending} disabled={!input.trim() || history.isPending || history.isError} className="shrink-0 justify-center px-3 py-2.5"><Send size={17} /><span className="hidden sm:inline">Send</span></Button>
+      </div>
+      <p className="text-[11px] leading-relaxed text-gray-500"><span className="hidden sm:inline">Enter to send · Shift+Enter for a new line. </span>{supportEnabled ? 'This chat can create support tickets. ' : ''}Admin messages do not create customer leads.</p>
+    </form>
+  </section>
+}
+
+function MessageBubble({ role, content, children }: { role: 'user' | 'assistant'; content: string; children?: React.ReactNode }) {
+  const fromUser = role === 'user'
+  return <div className={cn('flex items-start gap-2 sm:gap-3', fromUser && 'flex-row-reverse')}>
+    <div aria-hidden="true" className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-full', fromUser ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600')}>{fromUser ? <User size={15} /> : <Bot size={16} />}</div>
+    <div className="min-w-0 max-w-[85%] sm:max-w-[80%]"><span className="sr-only">{fromUser ? 'You' : 'Assistant'}: </span><div className={cn('whitespace-pre-wrap rounded-2xl px-3 py-2.5 text-sm leading-relaxed [overflow-wrap:anywhere] sm:px-4', fromUser ? 'rounded-tr-sm bg-blue-600 text-white' : 'rounded-tl-sm bg-gray-100 text-gray-800')}>{content}</div>{children}</div>
+  </div>
+}
+
+export function ChatTest() {
+  const slug = useTenantSlug()
+  return slug ? <ChatWorkspace key={slug} slug={slug} /> : null
 }
