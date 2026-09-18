@@ -1,4 +1,4 @@
-export type ConnectorType = 'whatsapp' | 'telegram' | 'web'
+export type ConnectorType = 'whatsapp' | 'telegram' | 'instagram' | 'web'
 
 export interface AutomationOption {
   id: string

@@ -14,6 +14,8 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     proxy: {
+      // Keep the portal's /webhooks page on Vite; proxy only the callback.
+      '/webhooks/instagram': 'http://localhost:8000',
       // context-agent backend lives under /api/v1/* (tenant-scoped, no auth).
       '/api': 'http://localhost:8000',
       '/auth': 'http://localhost:8000',

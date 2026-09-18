@@ -1,4 +1,4 @@
-export type ChannelType = 'telegram' | 'whatsapp' | 'razorpay'
+export type ChannelType = 'telegram' | 'whatsapp' | 'instagram' | 'razorpay'
 
 export interface BusinessChannel {
   channel_type: ChannelType
@@ -24,4 +24,11 @@ export interface RazorpayChannelPayload {
   key_id: string
   key_secret: string
   webhook_secret?: string
+}
+
+export interface InstagramChannelPayload {
+  account_id: string
+  access_token?: string
+  app_secret?: string
+  verify_token?: string
 }

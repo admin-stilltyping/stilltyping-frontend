@@ -4,9 +4,13 @@ import type {
   TelegramChannelPayload,
   WhatsAppChannelPayload,
   RazorpayChannelPayload,
+  InstagramChannelPayload,
 } from '@/types/channel'
 
 export const channelsApi = {
+  configureInstagram: (slug: string, payload: InstagramChannelPayload) =>
+    apiClient.put<BusinessChannel>(`/admin/${slug}/channels/instagram`, payload).then((r) => r.data),
+
   list: (slug: string) =>
     apiClient.get<BusinessChannel[]>(`/admin/${slug}/channels`).then((r) => r.data),
 

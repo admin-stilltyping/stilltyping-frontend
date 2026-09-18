@@ -2,7 +2,7 @@ import { ErrorState } from '@/components/ui/ErrorState'
 import { PageSkeleton } from '@/components/ui/LoadingState'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Bot, MessageSquare, Globe, Trash2, Save, CreditCard } from 'lucide-react'
+import { Bot, MessageSquare, Globe, Trash2, Save, CreditCard, Instagram } from 'lucide-react'
 import { channelsApi } from '@/api/channels'
 import { FeatureGate } from '@/components/ui/FeatureGate'
 import { Button, Input } from '@nivaso/ui'
@@ -11,10 +11,11 @@ import { cn } from '@/utils/cn'
 import { Flag, type FlagKey } from '@nivaso/types'
 import type { ConnectorType } from '@/types/connector'
 import { WebChatSetup } from '@/features/public-chat/WebChatSetup'
+import { InstagramConfigureForm } from '@/features/integrations/InstagramConfigureForm'
 
 // ── Channel status badge ──────────────────────────────────────────────────────
 
-function ChannelStatus({ configured }: { configured: boolean }) {
+function ChannelStatus({ configured, configuredLabel = 'Connected' }: { configured: boolean; configuredLabel?: string }) {
   return (
     <span
       className={cn(
@@ -28,7 +29,7 @@ function ChannelStatus({ configured }: { configured: boolean }) {
           configured ? 'bg-green-500' : 'bg-gray-400',
         )}
       />
-      {configured ? 'Connected' : 'Not configured'}
+      {configured ? configuredLabel : 'Not configured'}
     </span>
   )
 }
@@ -58,6 +59,7 @@ interface ConnectorCardProps {
   title: string
   icon: React.ReactNode
   configured: boolean
+  configuredLabel?: string
   featureFlag?: FlagKey
   featureLabel?: string
   slug: string
@@ -69,6 +71,7 @@ function ConnectorCard({
   title,
   icon,
   configured,
+  configuredLabel,
   featureFlag,
   featureLabel,
   configureContent,
@@ -81,7 +84,7 @@ function ConnectorCard({
           {icon}
           <h3 className="text-sm font-semibold text-gray-800">{title}</h3>
         </div>
-        <ChannelStatus configured={configured} />
+        <ChannelStatus configured={configured} configuredLabel={configuredLabel} />
       </div>
 
       {/* Content */}
@@ -382,7 +385,7 @@ function RazorpayConfigureForm({ slug }: { slug: string }) {
 export function IntegrationsPage() {
   const slug = useTenantSlug()
 
-  const { data: channels = [], isLoading, error, refetch } = useQuery({
+  const { data: channels = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ['channels', slug],
     queryFn: () => channelsApi.list(slug),
     enabled: !!slug,
@@ -394,6 +397,7 @@ export function IntegrationsPage() {
 
   const tgChannel = channels.find((c) => c.channel_type === 'telegram')
   const waChannel = channels.find((c) => c.channel_type === 'whatsapp')
+  const igChannel = channels.find((c) => c.channel_type === 'instagram')
   const rzpChannel = channels.find((c) => c.channel_type === 'razorpay')
 
   return (
@@ -404,6 +408,18 @@ export function IntegrationsPage() {
           Configure messaging channels and payment providers for each connector.
         </p>
       </div>
+
+      <ConnectorCard
+        title="Instagram"
+        icon={<Instagram className="h-5 w-5 text-pink-600" />}
+        configured={igChannel?.configured ?? false}
+        configuredLabel="Setup saved"
+        featureFlag={Flag.CHANNEL_INSTAGRAM}
+        featureLabel="Instagram"
+        slug={slug}
+        connectorType="instagram"
+        configureContent={<InstagramConfigureForm slug={slug} channel={igChannel} unavailable={isError} />}
+      />
 
       {/* Telegram */}
       <ConnectorCard

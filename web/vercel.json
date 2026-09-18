@@ -1,6 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
+    { "source": "/webhooks/instagram", "destination": "https://stilltyping-backend.vercel.app/webhooks/instagram" },
     { "source": "/api/:path*", "destination": "https://stilltyping-backend.vercel.app/api/:path*" },
     { "source": "/auth/:path*", "destination": "https://stilltyping-backend.vercel.app/auth/:path*" },
     { "source": "/admin/:path*", "destination": "https://stilltyping-backend.vercel.app/admin/:path*" },
