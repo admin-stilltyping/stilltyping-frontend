@@ -6,6 +6,7 @@ import { useTenantSlug } from '@/hooks/useTenantSlug'
 import { Badge, EmptyState } from '@nivaso/ui'
 import { cn } from '@/utils/cn'
 import type { TicketStatus } from '@/types/support'
+import { ErrorState } from '@/components/ui/ErrorState'
 
 type Tab = TicketStatus | 'all'
 
@@ -26,7 +27,7 @@ function formatDate(v: string | null) {
 
 function SkeletonRow() {
   return (
-    <tr className="animate-pulse">
+    <tr aria-hidden="true" className="motion-safe:animate-pulse">
       {Array.from({ length: 5 }).map((_, i) => (
         <td key={i} className="px-5 py-3">
           <div className="h-4 rounded bg-gray-200" />
@@ -39,7 +40,7 @@ function SkeletonRow() {
 export function TicketList() {
   const slug = useTenantSlug()
   const [tab, setTab] = useState<Tab>('open')
-  const { data: tickets, isLoading } = useTickets(
+  const { data: tickets, isLoading, error, refetch } = useTickets(
     slug,
     tab === 'all' ? undefined : { status: tab },
   )
@@ -64,15 +65,15 @@ export function TicketList() {
         ))}
       </div>
 
-      {tickets?.length === 0 && !isLoading ? (
+      {error ? <ErrorState error={error} title="Unable to load support tickets" onRetry={() => void refetch()} /> : tickets?.length === 0 && !isLoading ? (
         <EmptyState
           icon={TicketCheck}
           title="No tickets"
           description="No support tickets in this category."
         />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+          <table aria-busy={isLoading} aria-label="Support tickets" className="w-full min-w-[600px] text-sm">
             <thead className="border-b border-gray-100 bg-gray-50 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
               <tr>
                 <th className="px-5 py-3">Reference</th>

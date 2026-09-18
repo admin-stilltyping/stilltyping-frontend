@@ -171,13 +171,14 @@ export function DashboardPage() {
   })
   if (dashboard.isPending)
     return (
-      <div aria-label="Loading dashboard" className="mx-auto max-w-7xl space-y-6">
-        <div className="h-20 animate-pulse rounded-lg bg-slate-200/60" />
+      <div role="status" aria-label="Loading dashboard" className="mx-auto max-w-7xl space-y-6">
+        <span className="sr-only">Loading dashboard…</span>
+        <div aria-hidden="true" className="h-20 motion-safe:animate-pulse rounded-lg bg-slate-200/60" />
         <div className="grid gap-5 lg:grid-cols-2">
           {Array.from({ length: 6 }, (_, index) => (
             <div
               key={index}
-              className="h-64 animate-pulse rounded-xl border border-slate-200 bg-white"
+              aria-hidden="true" className="h-64 motion-safe:animate-pulse rounded-xl border border-slate-200 bg-white"
             />
           ))}
         </div>

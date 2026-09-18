@@ -1,10 +1,12 @@
+import { PageSkeleton } from '@/components/ui/LoadingState'
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Save } from 'lucide-react'
 import { useTicket, useUpdateTicket } from '@/hooks/useSupport'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
-import { Badge, Button, Select, Textarea, Spinner } from '@nivaso/ui'
+import { Badge, Button, Select, Textarea } from '@nivaso/ui'
 import type { TicketStatus, UpdateTicketPayload } from '@/types/support'
+import { ErrorState } from '@/components/ui/ErrorState'
 
 const STATUS_OPTIONS: { value: TicketStatus; label: string }[] = [
   { value: 'open', label: 'Open' },
@@ -23,14 +25,15 @@ function formatDateTime(v: string | null) {
 export function TicketDetail() {
   const { reference } = useParams<{ reference: string }>()
   const slug = useTenantSlug()
-  const { data: ticket, isLoading } = useTicket(slug, reference ?? '')
-  const { mutate: update, isPending } = useUpdateTicket(slug, reference ?? '')
+  const { data: ticket, isLoading, error, refetch } = useTicket(slug, reference ?? '')
+  const { mutate: update, isPending, error: saveError } = useUpdateTicket(slug, reference ?? '')
 
   const [status, setStatus] = useState<TicketStatus | ''>('')
   const [notes, setNotes] = useState('')
   const [saved, setSaved] = useState(false)
 
-  if (isLoading) return <Spinner />
+  if (isLoading) return <PageSkeleton label="Loading ticket…" variant="form" />
+  if (error) return <ErrorState error={error} title="Unable to load this ticket" onRetry={() => void refetch()} />
   if (!ticket) return <p className="text-gray-500">Ticket not found.</p>
 
   const handleSave = () => {
@@ -121,7 +124,8 @@ export function TicketDetail() {
             placeholder="Add a note for staff…"
             rows={3}
           />
-          <div className="flex items-center gap-3">
+          {saveError && <ErrorState error={saveError} title="Changes could not be saved" />}
+          <div className="flex flex-wrap items-center gap-3">
             <Button onClick={handleSave} loading={isPending}>
               <Save className="h-4 w-4" />
               Save Changes

@@ -1,3 +1,4 @@
+import { InlineLoading } from '@/components/ui/LoadingState'
 import { useState } from 'react'
 import { Package, Plus, Search, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -48,7 +49,7 @@ interface CreateProductFormValues {
 
 function SkeletonRow() {
   return (
-    <tr className="animate-pulse">
+    <tr aria-hidden="true" className="motion-safe:animate-pulse">
       {Array.from({ length: 5 }).map((_, i) => (
         <td key={i} className="px-5 py-3">
           <div className="h-4 rounded bg-gray-200" />
@@ -223,8 +224,8 @@ export function ProductList() {
           }
         />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+          <table aria-busy={isLoading} aria-label="Products" className="w-full min-w-[600px] text-sm">
             <thead className="border-b border-gray-100 bg-gray-50 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
               <tr>
                 <th className="px-5 py-3">Name</th>
@@ -299,7 +300,7 @@ export function ProductList() {
           <Textarea label="Description" placeholder="Brief product description…" rows={2} {...register('description')} />
           <Select label="Status" options={STATUS_OPTIONS} {...register('status')} />
 
-          {fields.isPending && <p role="status" className="text-sm text-gray-500">Loading custom fields…</p>}
+          {fields.isPending && <InlineLoading label="Loading custom fields…" />}
           {fields.isError && <p role="alert" className="text-sm text-red-600">
             {apiError(fields.error, 'Could not load custom fields. Try again before saving.')}{' '}
             <button type="button" className="underline" onClick={() => void fields.refetch()}>Retry</button>

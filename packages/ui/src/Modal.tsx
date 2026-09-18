@@ -1,5 +1,5 @@
 import { X } from 'lucide-react'
-import { useId, type ReactNode } from 'react'
+import { useEffect, useId, useRef, type ReactNode } from 'react'
 
 interface ModalProps {
   open: boolean
@@ -10,14 +10,26 @@ interface ModalProps {
 
 export function Modal({ open, onClose, title, children }: ModalProps) {
   const titleId = useId()
+  const dialog = useRef<HTMLDialogElement>(null)
+  useEffect(() => {
+    const element = dialog.current
+    if (!open || !element) return
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    if (!element.open) element.showModal()
+    return () => {
+      element.close()
+      if (previous?.isConnected) previous.focus()
+    }
+  }, [open])
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div role="dialog" aria-modal="true" aria-labelledby={titleId}
-        style={{ maxWidth: '40rem', maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto' }}
-        className="relative z-10 w-full rounded-xl bg-white p-6 shadow-xl">
+    <dialog ref={dialog} aria-labelledby={titleId}
+      onCancel={event => { event.preventDefault(); onClose() }}
+      onClick={event => { if (event.target === event.currentTarget) onClose() }}
+      style={{ width: 'calc(100% - 2rem)', maxWidth: '40rem', maxHeight: 'calc(100dvh - 2rem)' }}
+      className="m-auto overflow-y-auto rounded-xl border-0 bg-white p-0 text-gray-900 shadow-xl backdrop:bg-black/40">
+      <div className="p-5 sm:p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 id={titleId} className="text-lg font-semibold text-gray-900">{title}</h2>
           <button
@@ -30,6 +42,6 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
         </div>
         {children}
       </div>
-    </div>
+    </dialog>
   )
 }

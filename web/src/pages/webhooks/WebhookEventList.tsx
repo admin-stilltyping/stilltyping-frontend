@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Webhook, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Webhook, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ErrorState } from '@/components/ui/ErrorState'
 import { useQuery } from '@tanstack/react-query'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
 import { webhookEventsApi } from '@/api/webhookEvents'
@@ -44,7 +45,7 @@ const PAGE_SIZE = 50
 
 function SkeletonRow() {
   return (
-    <tr className="animate-pulse">
+    <tr aria-hidden="true" className="motion-safe:animate-pulse">
       {Array.from({ length: 5 }).map((_, i) => (
         <td key={i} className="px-5 py-3"><div className="h-4 rounded bg-gray-200" /></td>
       ))}
@@ -66,7 +67,7 @@ function WebhookEventListInner() {
   const [status, setStatus] = useState<WebhookStatus | 'all'>('all')
   const [page, setPage] = useState(0)
 
-  const { data: events, isLoading, isError } = useQuery({
+  const { data: events, isLoading, error, refetch } = useQuery({
     queryKey: ['webhook-events', slug, source, status, page],
     queryFn: () =>
       webhookEventsApi.list(slug, {
@@ -93,15 +94,7 @@ function WebhookEventListInner() {
     )
   }
 
-  if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-red-100 bg-red-50 py-12 text-center">
-        <AlertTriangle className="mb-2 h-8 w-8 text-red-400" />
-        <p className="text-sm font-medium text-red-700">Failed to load webhook events</p>
-        <p className="mt-1 text-xs text-red-500">Make sure the backend is running.</p>
-      </div>
-    )
-  }
+  if (error) return <ErrorState error={error} title="Unable to load webhook events" onRetry={() => void refetch()} />
 
   const hasNextPage = (events?.length ?? 0) === PAGE_SIZE
   const hasPrevPage = page > 0
@@ -148,8 +141,8 @@ function WebhookEventListInner() {
         />
       ) : (
         <>
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+            <table aria-busy={isLoading} aria-label="Webhook events" className="w-full min-w-[600px] text-sm">
               <thead className="border-b border-gray-100 bg-gray-50 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
                 <tr>
                   <th className="px-5 py-3">Source</th>

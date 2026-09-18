@@ -9,13 +9,13 @@ export interface InstructionsResponse {
 export const instructionsApi = {
   get: (slug: string) =>
     apiClient
-      .get<InstructionsResponse>(`/api/v1/tenants/${slug}/instructions`)
+      .get<InstructionsResponse>(`/admin/${slug}/instructions`)
       .then((r) => r.data),
 
   set: (slug: string, instructions: string) =>
     apiClient
       .put<{ tenant_id: string; length: number }>(
-        `/api/v1/tenants/${slug}/instructions`,
+        `/admin/${slug}/instructions`,
         { instructions },
       )
       .then((r) => r.data),

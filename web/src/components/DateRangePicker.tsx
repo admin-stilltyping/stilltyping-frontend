@@ -71,8 +71,8 @@ export function DateRangePicker({
   return (
     <div className="flex flex-wrap items-center gap-2">
       <div
-        className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5"
-        role="tablist"
+        className="inline-flex max-w-full flex-wrap rounded-lg border border-gray-200 bg-gray-50 p-0.5"
+        role="group"
         aria-label="Date range"
       >
         {PRESETS.map((p) => {
@@ -81,8 +81,7 @@ export function DateRangePicker({
             <button
               key={p.value}
               type="button"
-              role="tab"
-              aria-selected={active}
+              aria-pressed={active}
               onClick={() => selectPreset(p.value)}
               className={cn(
                 'rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
@@ -96,8 +95,9 @@ export function DateRangePicker({
       </div>
 
       {preset === 'custom' && (
-        <div className="flex items-center gap-2">
+        <div className="flex max-w-full flex-wrap items-center gap-2">
           <input
+            aria-label="Start date"
             type="date"
             value={customStart}
             max={customEnd || undefined}
@@ -106,6 +106,7 @@ export function DateRangePicker({
           />
           <span className="text-xs text-gray-400">to</span>
           <input
+            aria-label="End date"
             type="date"
             value={customEnd}
             min={customStart || undefined}

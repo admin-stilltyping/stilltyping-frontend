@@ -4,7 +4,7 @@ import type { Contact, Platform } from './types'
 
 export const card = 'rounded-xl border border-gray-200 bg-white p-5 shadow-sm'
 export const linkClass = 'text-blue-600 hover:underline'
-export const tableClass = 'w-full text-left text-sm [&_th]:px-4 [&_th]:py-3 [&_th]:font-medium [&_td]:px-4 [&_td]:py-3 [&_td]:align-top'
+export const tableClass = 'w-full min-w-[600px] text-left text-sm [&_th]:px-4 [&_th]:py-3 [&_th]:font-medium [&_td]:px-4 [&_td]:py-3 [&_td]:align-top'
 
 export function ErrorNotice({ error, retry }: { error: unknown; retry?: () => void }) {
   if (!error) return null
@@ -15,7 +15,7 @@ export function ErrorNotice({ error, retry }: { error: unknown; retry?: () => vo
 }
 
 export function Pager({ offset, total, onChange, size = 25 }: { offset: number; total: number; onChange: (offset: number) => void; size?: number }) {
-  return <div className="mt-4 flex items-center justify-between gap-3 text-sm text-gray-500">
+  return <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-gray-500">
     <span>{total ? `${offset + 1}–${Math.min(offset + size, total)} of ${total}` : '0 records'}</span>
     <div className="flex gap-2">
       <Button type="button" size="sm" variant="secondary" disabled={offset === 0} onClick={() => onChange(Math.max(0, offset - size))}>Previous</Button>

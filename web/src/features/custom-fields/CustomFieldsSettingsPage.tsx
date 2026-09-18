@@ -1,6 +1,7 @@
+import { PageSkeleton } from '@/components/ui/LoadingState'
 import { useState } from 'react'
 import { Settings2, Plus, Pencil, Trash2 } from 'lucide-react'
-import { Badge, Button, Input, Select, Modal, EmptyState, Spinner } from '@nivaso/ui'
+import { Badge, Button, Input, Select, Modal, EmptyState } from '@nivaso/ui'
 import { FeatureGate } from '@/components/ui/FeatureGate'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
 import { cn } from '@/utils/cn'
@@ -219,7 +220,7 @@ export function CustomFieldsSettingsPage() {
           <button className="underline" onClick={() => void refetch()}>Retry</button>
         </p>
       ) : isLoading ? (
-        <Spinner />
+        <PageSkeleton label="Loading custom fields…" variant="table" />
       ) : sorted.length === 0 ? (
         <EmptyState
           icon={Settings2}
@@ -232,8 +233,8 @@ export function CustomFieldsSettingsPage() {
           }
         />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+          <table className="w-full min-w-[600px] text-sm">
             <thead className="border-b border-gray-100 bg-gray-50 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
               <tr>
                 <th className="px-5 py-3">Key</th>

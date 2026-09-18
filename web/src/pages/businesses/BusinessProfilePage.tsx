@@ -20,7 +20,7 @@ export function BusinessProfilePage() {
       </div>
       <dl className="grid gap-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:grid-cols-2">
         {[
-          ['Business ID (_id)', business._id],
+          ['Business ID', business._id],
           ['Subdomain slug', business.slug],
           ['Business name', business.name],
           ['Timezone', business.timezone],

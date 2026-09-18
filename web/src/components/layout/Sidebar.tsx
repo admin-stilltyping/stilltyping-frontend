@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom'
 
 import { cn } from '@/utils/cn'
-import { useBusiness } from '@/hooks/useBusinesses'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
 import { useEntitlementStore } from '@/store/entitlementStore'
 import { flagEnabled, type FlagKey } from '@nivaso/types'
@@ -11,7 +10,7 @@ import { useBusinessSession } from '@/components/auth/BusinessSession'
 export function Sidebar() {
   const slug = useTenantSlug()
   const session = useBusinessSession()
-  const { data: business } = useBusiness(slug)
+  const business = session.business
 
   const entitlements = useEntitlementStore((s) => s.entitlements)
   const isLoaded = useEntitlementStore((s) => s.isLoaded)
@@ -23,7 +22,7 @@ export function Sidebar() {
   const businessHref = `/businesses/${slug}`
 
   return (
-    <aside className="flex h-screen w-56 flex-col border-r border-gray-200 bg-white">
+    <aside className="flex h-dvh w-56 flex-col border-r border-gray-200 bg-white">
       <div className="flex h-16 items-center border-b border-gray-200 px-4 min-w-0">
         <span className="text-base font-bold text-blue-600 truncate" title={business?.name}>
           {business?.name ?? 'Admin Portal'}

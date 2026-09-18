@@ -1,10 +1,11 @@
+import { PageSkeleton } from '@/components/ui/LoadingState'
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react'
 import { useService, useUpdateService, useArchiveService } from '@/hooks/useServices'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
-import { Badge, Button, Input, Select, Textarea, Spinner, Modal } from '@nivaso/ui'
+import { Badge, Button, Input, Select, Textarea, Modal } from '@nivaso/ui'
 import { SERVICE_STATUS_COLORS } from '@/utils/constants'
 import { formatCurrency } from '@/utils/formatters'
 import { ErrorNotice } from '@/features/crm/shared'
@@ -72,7 +73,7 @@ export function ServiceDetail() {
     }
   }, [service, reset, editing])
 
-  if (isLoading) return <Spinner />
+  if (isLoading) return <PageSkeleton label="Loading service…" variant="form" />
   if (loadError) return <ErrorNotice error={loadError} retry={() => void refetch()} />
   if (!service) return <p className="text-gray-500">Service not found.</p>
 

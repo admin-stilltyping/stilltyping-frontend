@@ -44,7 +44,7 @@ interface CreateServiceFormValues {
 
 function SkeletonRow() {
   return (
-    <tr className="animate-pulse">
+    <tr aria-hidden="true" className="motion-safe:animate-pulse">
       {Array.from({ length: 5 }).map((_, i) => (
         <td key={i} className="px-5 py-3">
           <div className="h-4 rounded bg-gray-200" />
@@ -165,8 +165,8 @@ export function ServiceList() {
           }
         />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+          <table aria-busy={isLoading} aria-label="Services" className="w-full min-w-[600px] text-sm">
             <thead className="border-b border-gray-100 bg-gray-50 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
               <tr>
                 <th className="px-5 py-3">Name</th>

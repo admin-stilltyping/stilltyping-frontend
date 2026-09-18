@@ -1,3 +1,4 @@
+import { InlineLoading } from '@/components/ui/LoadingState'
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
@@ -80,7 +81,7 @@ export function LoginPage() {
           </p>
         )}
         {hostSlug && branding.isPending ? (
-          <p className="text-center text-gray-500">Loading business…</p>
+          <InlineLoading label="Loading business…" />
         ) : hostSlug && branding.isError ? (
           <div
             role="alert"

@@ -14,7 +14,8 @@ export function Header({ title }: { title: string }) {
   const navigation = useRef<HTMLDialogElement>(null)
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 sm:px-6">
-      <div className="flex items-center gap-2">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:rounded-lg focus:bg-blue-600 focus:p-3 focus:text-white">Skip to content</a>
+      <div className="flex min-w-0 items-center gap-2">
         <button
           aria-label="Open navigation"
           onClick={() => navigation.current?.showModal()}
@@ -22,7 +23,7 @@ export function Header({ title }: { title: string }) {
         >
           <Menu className="h-5 w-5" />
         </button>
-        <h1 className="text-lg font-semibold text-gray-900">{title}</h1>
+        <h1 className="truncate text-base font-semibold text-gray-900 sm:text-lg">{title}</h1>
       </div>
       <dialog
         ref={navigation}

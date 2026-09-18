@@ -7,11 +7,12 @@ import { Badge, EmptyState } from '@nivaso/ui'
 import { formatDate } from '@/utils/formatters'
 import { Flag } from '@nivaso/types'
 import { cn } from '@/utils/cn'
+import { ErrorState } from '@/components/ui/ErrorState'
 
 function SkeletonRow() {
   return (
-    <tr className="animate-pulse">
-      {Array.from({ length: 7 }).map((_, i) => (
+    <tr aria-hidden="true" className="motion-safe:animate-pulse">
+      {Array.from({ length: 8 }).map((_, i) => (
         <td key={i} className="px-4 py-3"><div className="h-4 rounded bg-gray-200" /></td>
       ))}
     </tr>
@@ -29,7 +30,7 @@ export function AgentRunList() {
 function AgentRunListInner() {
   const slug = useTenantSlug()
 
-  const { data: runs, isLoading } = useQuery({
+  const { data: runs, isLoading, error, refetch } = useQuery({
     queryKey: ['agent-runs', slug],
     queryFn: () => agentRunsApi.list(slug, { limit: 100 }),
     enabled: !!slug,
@@ -38,6 +39,7 @@ function AgentRunListInner() {
 
   const totalCost = runs?.reduce((s, r) => s + r.estimated_cost_usd, 0) ?? 0
   const totalTokens = runs?.reduce((s, r) => s + r.input_tokens + r.output_tokens, 0) ?? 0
+  if (error) return <ErrorState error={error} title="Unable to load agent activity" onRetry={() => void refetch()} />
 
   return (
     <div>
@@ -60,8 +62,8 @@ function AgentRunListInner() {
       {runs?.length === 0 && !isLoading ? (
         <EmptyState icon={Activity} title="No agent runs" description="Agent turns appear here as customers chat." />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+          <table aria-busy={isLoading} aria-label="Agent activity" className="w-full min-w-[600px] text-sm">
             <thead className="border-b border-gray-100 bg-gray-50 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
               <tr>
                 <th className="px-4 py-3">Model</th>

@@ -1,9 +1,11 @@
+import { ErrorState } from '@/components/ui/ErrorState'
+import { PageSkeleton } from '@/components/ui/LoadingState'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Bot, MessageSquare, Globe, Trash2, Save, CreditCard } from 'lucide-react'
 import { channelsApi } from '@/api/channels'
 import { FeatureGate } from '@/components/ui/FeatureGate'
-import { Button, Input, Spinner } from '@nivaso/ui'
+import { Button, Input } from '@nivaso/ui'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
 import { cn } from '@/utils/cn'
 import { Flag, type FlagKey } from '@nivaso/types'
@@ -380,14 +382,15 @@ function RazorpayConfigureForm({ slug }: { slug: string }) {
 export function IntegrationsPage() {
   const slug = useTenantSlug()
 
-  const { data: channels = [], isLoading } = useQuery({
+  const { data: channels = [], isLoading, error, refetch } = useQuery({
     queryKey: ['channels', slug],
     queryFn: () => channelsApi.list(slug),
     enabled: !!slug,
   })
 
   if (!slug) return null
-  if (isLoading) return <Spinner />
+  if (isLoading) return <PageSkeleton label="Loading integrations…" variant="cards" />
+  if (error) return <ErrorState error={error} title="Unable to load integrations" onRetry={() => void refetch()} />
 
   const tgChannel = channels.find((c) => c.channel_type === 'telegram')
   const waChannel = channels.find((c) => c.channel_type === 'whatsapp')

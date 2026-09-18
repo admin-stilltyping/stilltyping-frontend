@@ -1,10 +1,12 @@
+import { InlineLoading } from '@/components/ui/LoadingState'
+import { PageSkeleton } from '@/components/ui/LoadingState'
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react'
 import { useProduct, useUpdateProduct, useArchiveProduct } from '@/hooks/useProducts'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
-import { Badge, Button, Input, Select, Textarea, Spinner, Modal } from '@nivaso/ui'
+import { Badge, Button, Input, Select, Textarea, Modal } from '@nivaso/ui'
 import { PRODUCT_STATUS_COLORS } from '@/utils/constants'
 import { formatCurrency } from '@/utils/formatters'
 import { DynamicCustomFieldsFields } from '@/features/custom-fields/DynamicCustomFieldsFields'
@@ -74,7 +76,7 @@ export function ProductDetail() {
     }
   }, [product, reset, editing])
 
-  if (isLoading) return <Spinner />
+  if (isLoading) return <PageSkeleton label="Loading product…" variant="form" />
   if (loadError) return <p role="alert" className="text-red-600">
     {apiError(loadError, 'Could not load product.')}{' '}
     <button className="underline" onClick={() => void refetch()}>Retry</button>
@@ -169,7 +171,7 @@ export function ProductDetail() {
           <Textarea label="Description" rows={2} {...register('description')} />
           <Select label="Status" options={STATUS_OPTIONS} {...register('status')} />
 
-          {fields.isPending && <p role="status" className="text-sm text-gray-500">Loading custom fields…</p>}
+          {fields.isPending && <InlineLoading label="Loading custom fields…" />}
           {fields.isError && <p role="alert" className="text-sm text-red-600">
             {apiError(fields.error, 'Could not load custom fields. Try again before saving.')}{' '}
             <button type="button" className="underline" onClick={() => void fields.refetch()}>Retry</button>

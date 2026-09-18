@@ -10,6 +10,7 @@ import { EmptyState, Badge } from '@nivaso/ui'
 import { formatNumber, formatDate } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
 import type { AiUsageByChannel } from '@/api/aiUsage'
+import { ErrorState } from '@/components/ui/ErrorState'
 
 // Icon/label/color per channel — matches the choices already made in
 // IntegrationsPage.tsx (Bot for Telegram, MessageSquare for WhatsApp, Globe
@@ -48,8 +49,8 @@ function SkeletonBlock() {
           <div key={i} className="h-16 rounded-xl border border-gray-200 bg-gray-100" />
         ))}
       </div>
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+        <table className="w-full min-w-[600px] text-sm">
           <tbody className="divide-y divide-gray-100">
             {Array.from({ length: 5 }).map((_, i) => (
               <tr key={i}>
@@ -85,7 +86,7 @@ function ChannelCard({ channel }: { channel: AiUsageByChannel }) {
 
 function RunsSkeletonRow() {
   return (
-    <tr className="animate-pulse">
+    <tr aria-hidden="true" className="motion-safe:animate-pulse">
       {Array.from({ length: 8 }).map((_, i) => (
         <td key={i} className="px-4 py-3">
           <div className="h-4 rounded bg-gray-200" />
@@ -102,7 +103,7 @@ function RunsSkeletonRow() {
  * Usage as a whole is ungated.
  */
 function RecentRuns({ slug, range }: { slug: string; range: DateRangeValue }) {
-  const { data: runs, isLoading } = useQuery({
+  const { data: runs, isLoading, error, refetch } = useQuery({
     queryKey: ['agent-runs', slug, range.start, range.end],
     queryFn: () => agentRunsApi.list(slug, { limit: 100, ...range }),
     enabled: !!slug,
@@ -112,15 +113,15 @@ function RecentRuns({ slug, range }: { slug: string; range: DateRangeValue }) {
   return (
     <div>
       <h3 className="mb-2 text-sm font-semibold text-gray-700">Recent Runs</h3>
-      {runs?.length === 0 && !isLoading ? (
+      {error ? <ErrorState error={error} title="Unable to load recent activity" onRetry={() => void refetch()} /> : runs?.length === 0 && !isLoading ? (
         <EmptyState
           icon={Activity}
           title="No agent runs"
           description="Agent turns appear here as customers chat, for the selected range."
         />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+          <table className="w-full min-w-[600px] text-sm">
             <thead className="border-b border-gray-100 bg-gray-50 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
               <tr>
                 <th className="px-4 py-3">Model</th>
@@ -179,7 +180,7 @@ function RecentRuns({ slug, range }: { slug: string; range: DateRangeValue }) {
 export function AiUsagePage() {
   const slug = useTenantSlug()
   const [range, setRange] = useState<DateRangeValue>({})
-  const { data, isLoading } = useAiUsage(slug, range)
+  const { data, isLoading, error, refetch } = useAiUsage(slug, range)
 
   const totalTokens = data ? data.total.input_tokens + data.total.output_tokens : 0
   const hasUsage = !!data && data.total.runs > 0
@@ -197,7 +198,7 @@ export function AiUsagePage() {
         <DateRangePicker value={range} onChange={setRange} />
       </div>
 
-      {isLoading ? (
+      {error ? <ErrorState error={error} title="Unable to load AI usage" onRetry={() => void refetch()} /> : isLoading ? (
         <SkeletonBlock />
       ) : !hasUsage ? (
         <EmptyState
@@ -237,8 +238,8 @@ export function AiUsagePage() {
           {data.by_customer.length > 0 && (
             <div>
               <h3 className="mb-2 text-sm font-semibold text-gray-700">By Customer</h3>
-              <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-                <table className="w-full text-sm">
+              <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+                <table className="w-full min-w-[600px] text-sm">
                   <thead className="border-b border-gray-100 bg-gray-50 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
                     <tr>
                       <th className="px-4 py-3">Customer</th>

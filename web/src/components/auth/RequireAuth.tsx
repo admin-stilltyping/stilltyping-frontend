@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/authStore'
 import { isTokenExpired } from '@/utils/auth'
 import { currentSubdomainSlug } from '@/utils/tenant'
 import { BusinessSessionContext } from './BusinessSession'
+import { PortalSkeleton } from '@/components/ui/LoadingState'
 
 export function RequireAuth({ children }: { children: React.ReactNode }) {
   const { token, clearAuth } = useAuthStore()
@@ -16,8 +17,8 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
     queryFn: authApi.me,
     enabled: !!token && !expired,
     retry: false,
-    staleTime: 0,
-    gcTime: 0,
+    staleTime: 30_000,
+    gcTime: 300_000,
     refetchInterval: 60_000,
   })
   useEffect(() => {
@@ -28,7 +29,7 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
   }, [expired, clearAuth, qc])
   if (!token || expired) return <Navigate to={expired ? '/login?expired=1' : '/login'} replace />
   if (session.isPending)
-    return <div className="p-8 text-center text-gray-500">Loading your business…</div>
+    return <PortalSkeleton />
   if (session.isError)
     return (
       <div role="alert" className="space-y-4 p-8 text-center text-gray-700">

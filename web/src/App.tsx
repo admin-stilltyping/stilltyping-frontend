@@ -34,6 +34,7 @@ import { ChatTest } from '@/pages/chat/ChatTest'
 import { ChatDemo } from '@/pages/chat/ChatDemo'
 import { CustomerChat } from '@/pages/chat/CustomerChat'
 import { PrivacyPolicy } from '@/pages/PrivacyPolicy'
+import { PageSkeleton } from '@/components/ui/LoadingState'
 
 const DashboardPage = lazy(() => import('@/features/dashboard/DashboardPage').then((module) => ({ default: module.DashboardPage })))
 
@@ -61,7 +62,7 @@ export default function App() {
           <Route path="/c/:slug" element={<CustomerChat />} />
 
           <Route element={<RequireAuth><Layout /></RequireAuth>}>
-            <Route path="dashboard" element={<Suspense fallback={<p className="p-6 text-slate-500">Loading dashboard…</p>}><DashboardPage /></Suspense>} />
+            <Route path="dashboard" element={<Suspense fallback={<PageSkeleton label="Loading dashboard…" variant="cards" />}><DashboardPage /></Suspense>} />
 
             <Route path="businesses/:slug" element={<BusinessProfilePage />} />
             <Route path="integrations" element={<IntegrationsPage />} />

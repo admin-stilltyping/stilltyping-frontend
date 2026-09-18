@@ -2,6 +2,7 @@ import { Lock } from 'lucide-react'
 import { useEntitlementStore } from '@/store/entitlementStore'
 import { useBusinessSession } from '@/components/auth/BusinessSession'
 import { flagEnabled, type FlagKey } from '@nivaso/types'
+import { InlineLoading } from './LoadingState'
 
 interface FeatureGateProps {
   flag: FlagKey
@@ -14,7 +15,7 @@ export function FeatureGate({ flag, label, children, silent = false }: FeatureGa
   const entitlements = useEntitlementStore((s) => s.entitlements)
   const isLoaded = useEntitlementStore((s) => s.isLoaded)
   const { business } = useBusinessSession()
-  if (!isLoaded) return silent ? null : <p role="status" className="text-sm text-gray-500">Loading module access…</p>
+  if (!isLoaded) return silent ? null : <InlineLoading label="Loading module access…" />
   if (entitlements?.business_id === business._id && flagEnabled(entitlements, flag)) return <>{children}</>
   if (silent) return null
   return (

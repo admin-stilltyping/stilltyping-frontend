@@ -1,3 +1,4 @@
+import { PageSkeleton } from '@/components/ui/LoadingState'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
@@ -15,7 +16,7 @@ export function CustomerList() {
   return <div className="space-y-4"><p className="text-sm text-gray-500">Customers are created after an order or appointment is saved.</p>
     <Input aria-label="Search customers" placeholder="Search phone or social ID" value={search} onChange={e => { setSearch(e.target.value); setOffset(0) }} />
     <ErrorNotice error={query.error} retry={() => void query.refetch()} />
-    {query.isPending ? <p role="status">Loading customers…</p> : query.data && <>
+    {query.isPending ? <PageSkeleton label="Loading customers…" variant="table" /> : query.data && <>
       <div className="overflow-x-auto rounded-xl border bg-white"><table className={tableClass}><thead className="bg-gray-50"><tr><th>Customer ID</th><th>Phone number</th><th>Social identities</th></tr></thead><tbody className="divide-y">
         {query.data.items.map(customer => <tr key={customer.id}><td><Link className={`${linkClass} font-mono text-xs`} to={`/customers/${customer.id}`}>{customer.id}</Link></td><td>{customer.phone ?? '—'}</td><td>{customer.social_identities.map(s => <p key={`${s.platform}:${s.external_id}`} className="break-all">{s.platform}: {s.external_id}</p>)}</td></tr>)}
       </tbody></table>{!query.data.total && <p className="p-8 text-center text-gray-500">No customers yet. Save an order or appointment to create the first customer.</p>}</div>
@@ -34,7 +35,7 @@ export function CustomerDetail() {
   const leads = useQuery({ queryKey: ['customer-leads', slug, customerId], queryFn: () => crmApi.customerLeads(slug, customerId), enabled: canLead && !!query.data })
   const customer = query.data
   return <div className="max-w-4xl space-y-5"><Link to="/customers" className={linkClass}>← Customers</Link><ErrorNotice error={query.error} retry={() => void query.refetch()} />
-    {query.isPending && <p role="status">Loading customer…</p>}
+    {query.isPending && <PageSkeleton label="Loading customer…" variant="form" />}
     {customer && <>
       <div className={card}><h2 className="text-xl font-semibold">Customer</h2><dl className="mt-4 space-y-3 text-sm"><div><dt className="text-gray-500">Customer ID</dt><dd className="break-all font-mono">{customer.id}</dd></div><div><dt className="text-gray-500">Phone number</dt><dd>{customer.phone ?? '—'}</dd></div><div><dt className="text-gray-500">Social identities</dt><dd>{customer.social_identities.length ? customer.social_identities.map(s => <p className="break-all" key={`${s.platform}:${s.external_id}`}>{s.platform}: {s.external_id}</p>) : '—'}</dd></div></dl></div>
       {canOrder && <section className={card}><div className="flex justify-between"><h3 className="font-semibold">Orders</h3><Link className={linkClass} to={`/orders?customer_id=${customerId}`}>Create order</Link></div><ErrorNotice error={orders.error} retry={() => void orders.refetch()} />{orders.data?.items.map(order => <p className="mt-3 text-sm" key={order.id}><Link className={linkClass} to={`/orders/${order.id}`}>{order.reference}</Link> · {order.status} · {order.currency} {order.total}</p>)}{orders.data && <Pager offset={orderOffset} total={orders.data.total} onChange={setOrderOffset} />}</section>}
