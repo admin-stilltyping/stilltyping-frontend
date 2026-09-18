@@ -14,3 +14,7 @@ export function getUnreadCount(slug: string) {
 export function markNotificationRead(slug: string, id: string) {
   return apiClient.patch<AppNotification>(`/admin/${slug}/notifications/${id}/read`).then((r) => r.data)
 }
+
+export function markAllNotificationsRead(slug: string) {
+  return apiClient.patch(`/admin/${slug}/notifications/read-all`)
+}

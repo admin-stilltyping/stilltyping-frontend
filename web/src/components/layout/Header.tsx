@@ -1,10 +1,12 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { LogOut, Menu, X } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { useBusinessSession } from '@/components/auth/BusinessSession'
 import { Sidebar } from './Sidebar'
+import { NotificationBell } from './NotificationBell'
+import { disablePush } from '@/utils/push'
 
 export function Header({ title }: { title: string }) {
   const navigate = useNavigate()
@@ -12,6 +14,7 @@ export function Header({ title }: { title: string }) {
   const clearAuth = useAuthStore((s) => s.clearAuth)
   const { business, username } = useBusinessSession()
   const navigation = useRef<HTMLDialogElement>(null)
+  const [signingOut, setSigningOut] = useState(false)
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 sm:px-6">
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:rounded-lg focus:bg-blue-600 focus:p-3 focus:text-white">Skip to content</a>
@@ -50,17 +53,21 @@ export function Header({ title }: { title: string }) {
         </div>
       </dialog>
       <div className="flex min-w-0 items-center gap-3">
+        <NotificationBell slug={business.slug} />
         <span className="hidden truncate text-sm text-gray-600 sm:inline">{business.name}</span>
         <button
           title={`Signed in as ${username}`}
-          onClick={() => {
+          disabled={signingOut}
+          onClick={async () => {
+            setSigningOut(true)
+            await disablePush(business.slug).catch(() => undefined)
             clearAuth()
             qc.clear()
             navigate('/login', { replace: true })
           }}
           className="flex shrink-0 items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-600 hover:text-red-600"
         >
-          <LogOut className="h-3.5 w-3.5" /> Sign out
+          <LogOut className="h-3.5 w-3.5" /> {signingOut ? 'Signing out…' : 'Sign out'}
         </button>
       </div>
     </header>
