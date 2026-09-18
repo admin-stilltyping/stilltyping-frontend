@@ -20,7 +20,8 @@ export default defineConfig({
       '/api': 'http://localhost:8000',
       '/auth': 'http://localhost:8000',
       '/admin': 'http://localhost:8000',
-      '/web': 'http://localhost:8000',
+      // Match the public-chat API path, not the portal's /webhooks page.
+      '^/web(?:/|$)': 'http://localhost:8000',
       '/health': 'http://localhost:8000',
       '/module-catalog': 'http://localhost:8000',
     },

@@ -1,7 +1,16 @@
 import apiClient from './client'
-import type { WebhookEvent } from '@/types/webhookEvent'
+import type { WebhookEventPage, WebhookSource, WebhookStatus } from '@/types/webhookEvent'
+
+export interface WebhookEventParams {
+  source?: WebhookSource
+  status?: WebhookStatus
+  start?: string
+  end?: string
+  limit?: number
+  offset?: number
+}
 
 export const webhookEventsApi = {
-  list: (slug: string, params?: { source?: string; status?: string; limit?: number; offset?: number }) =>
-    apiClient.get<WebhookEvent[]>(`/admin/${slug}/webhook-events`, { params }).then((r) => r.data),
+  list: (slug: string, params?: WebhookEventParams) =>
+    apiClient.get<WebhookEventPage>(`/admin/${slug}/webhook-events`, { params }).then((r) => r.data),
 }
