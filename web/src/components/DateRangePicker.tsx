@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { cn } from '@/utils/cn'
+import { calendarDate } from '@/utils/aiUsage'
 
 /**
  * `{ start: undefined, end: undefined }` means "use the backend's default"
@@ -22,22 +23,13 @@ const PRESETS: { value: Preset; label: string }[] = [
   { value: 'custom', label: 'Custom range' },
 ]
 
-function toIsoDate(d: Date) {
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
-}
-
-function daysAgo(n: number) {
-  const d = new Date()
-  d.setDate(d.getDate() - n)
-  return toIsoDate(d)
-}
-
 export function DateRangePicker({
   value,
   onChange,
+  timeZone,
 }: {
   value: DateRangeValue
+  timeZone?: string
   onChange: (range: DateRangeValue) => void
 }) {
   // Derived once on mount from the incoming value, then owned locally — a
@@ -52,9 +44,9 @@ export function DateRangePicker({
     if (p === 'this-month') {
       onChange({ start: undefined, end: undefined })
     } else if (p === '7d') {
-      onChange({ start: daysAgo(6), end: toIsoDate(new Date()) })
+      onChange({ start: calendarDate(6, timeZone), end: calendarDate(0, timeZone) })
     } else if (p === '30d') {
-      onChange({ start: daysAgo(29), end: toIsoDate(new Date()) })
+      onChange({ start: calendarDate(29, timeZone), end: calendarDate(0, timeZone) })
     } else if (customStart && customEnd) {
       onChange({ start: customStart, end: customEnd })
     }
