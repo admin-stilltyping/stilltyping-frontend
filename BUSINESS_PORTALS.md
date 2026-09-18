@@ -45,7 +45,7 @@ files outside each root directory so the shared workspace packages are available
 - Super-admin domain: `superadmin.stilltyping.in`. Set
   `VITE_WEB_URL=https://stilltyping.in` so business links use the correct suffix.
 - Keep `VITE_API_BASE_URL` unset or empty in both projects. Their `vercel.json`
-  files proxy API requests to `https://project-u7ai2-seven.vercel.app` before the
+  files proxy API requests to `https://stilltyping-backend.vercel.app` before the
   SPA fallback. This avoids cross-origin API requests. Rewrite caching is disabled
   so authenticated responses are not stored by the proxy.
 - Deploy the separate landing-page repository at `stilltyping.in`.

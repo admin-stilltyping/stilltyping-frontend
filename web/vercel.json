@@ -1,12 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://project-u7ai2-seven.vercel.app/api/:path*" },
-    { "source": "/auth/:path*", "destination": "https://project-u7ai2-seven.vercel.app/auth/:path*" },
-    { "source": "/admin/:path*", "destination": "https://project-u7ai2-seven.vercel.app/admin/:path*" },
-    { "source": "/web/:path*", "destination": "https://project-u7ai2-seven.vercel.app/web/:path*" },
-    { "source": "/health", "destination": "https://project-u7ai2-seven.vercel.app/health" },
-    { "source": "/module-catalog", "destination": "https://project-u7ai2-seven.vercel.app/module-catalog" },
+    { "source": "/api/:path*", "destination": "https://stilltyping-backend.vercel.app/api/:path*" },
+    { "source": "/auth/:path*", "destination": "https://stilltyping-backend.vercel.app/auth/:path*" },
+    { "source": "/admin/:path*", "destination": "https://stilltyping-backend.vercel.app/admin/:path*" },
+    { "source": "/web/:path*", "destination": "https://stilltyping-backend.vercel.app/web/:path*" },
+    { "source": "/health", "destination": "https://stilltyping-backend.vercel.app/health" },
+    { "source": "/module-catalog", "destination": "https://stilltyping-backend.vercel.app/module-catalog" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
