@@ -12,6 +12,7 @@ import { Flag, type FlagKey } from '@nivaso/types'
 import type { ConnectorType } from '@/types/connector'
 import { WebChatSetup } from '@/features/public-chat/WebChatSetup'
 import { InstagramConfigureForm } from '@/features/integrations/InstagramConfigureForm'
+import { GeminiIntegrationCard } from '@/features/integrations/GeminiIntegrationCard'
 
 // ── Channel status badge ──────────────────────────────────────────────────────
 
@@ -405,9 +406,11 @@ export function IntegrationsPage() {
       <div>
         <h2 className="text-lg font-semibold text-gray-900">Integrations</h2>
         <p className="text-sm text-gray-500">
-          Configure messaging channels and payment providers for each connector.
+          Configure your AI provider, messaging channels, and payments.
         </p>
       </div>
+
+      <GeminiIntegrationCard key={slug} slug={slug} />
 
       <ConnectorCard
         title="Instagram"
