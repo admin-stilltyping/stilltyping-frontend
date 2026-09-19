@@ -46,9 +46,6 @@ export function Layout() {
     queryKey: ['entitlements', slug],
     queryFn: () => entitlementsApi.get(slug),
     enabled: !!slug,
-    staleTime: 30_000,
-    refetchInterval: 60_000,
-    refetchIntervalInBackground: false,
     retry: 1,
   })
 
