@@ -9,6 +9,7 @@ import { SuperAdminBusinessDetail } from '@/pages/SuperAdminBusinessDetail'
 import { SuperAdminFeatureRequests } from '@/pages/SuperAdminFeatureRequests'
 import { SuperAdminPlanDefaults } from '@/pages/SuperAdminPlanDefaults'
 import { SuperAdminAiUsage } from '@/pages/SuperAdminAiUsage'
+import { SuperAdminRequestTiming } from '@/pages/SuperAdminRequestTiming'
 import { SuperAdminAuditLog } from '@/pages/SuperAdminAuditLog'
 import { SuperAdminPlaybook } from '@/pages/SuperAdminPlaybook'
 import { SuperAdminChat } from '@/pages/SuperAdminChat'
@@ -35,6 +36,7 @@ export default function App() {
             <Route path="requests"         element={<SuperAdminFeatureRequests />} />
             <Route path="plans"            element={<SuperAdminPlanDefaults />} />
             <Route path="ai-usage"         element={<SuperAdminAiUsage />} />
+            <Route path="request-timing"   element={<SuperAdminRequestTiming />} />
             <Route path="audit"            element={<SuperAdminAuditLog />} />
             <Route path="playbook"         element={<SuperAdminPlaybook />} />
             <Route path="chat"             element={<SuperAdminChat />} />
