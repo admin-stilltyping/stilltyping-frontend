@@ -8,7 +8,7 @@ import { DateRangePicker, type DateRangeValue } from '@/components/DateRangePick
 import { ErrorState } from '@/components/ui/ErrorState'
 import { PageSkeleton } from '@/components/ui/LoadingState'
 import type { AiUsageReply } from '@/api/aiUsage'
-import { usageSeconds, usageTokens } from '@/utils/aiUsage'
+import { cacheTokens, usageSeconds, usageTokens } from '@/utils/aiUsage'
 import { cn } from '@/utils/cn'
 
 const CHANNELS: Record<string, { label: string; icon: LucideIcon; color: string }> = {
@@ -49,6 +49,7 @@ export function AiUsagePage() {
   const timezone = data?.timezone ?? business.timezone
   const summary = data?.summary
   const incomplete = !!summary?.incomplete_replies
+  const cacheIncomplete = !!summary?.cache_incomplete_replies
 
   function refresh() {
     if (offset) setOffset(0)
@@ -72,6 +73,16 @@ export function AiUsagePage() {
             { label: 'Average completion', value: usageSeconds(summary!.average_duration_ms), hint: 'Completed replies only', icon: Clock3 },
           ].map(({ label, value, hint, icon: Icon }) => <div key={label} className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5"><div className="flex items-center justify-between gap-2"><p className="text-xs font-medium text-slate-500 sm:text-sm">{label}</p><Icon aria-hidden="true" className="h-4 w-4 shrink-0 text-slate-400" /></div><p className="mt-3 break-words text-xl font-semibold tabular-nums tracking-tight text-slate-900 sm:text-2xl">{value}</p><p className="mt-1 text-xs text-slate-500">{hint}</p></div>)}
         </div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div><h3 className="text-sm font-semibold text-slate-900">Input token breakdown</h3><p className="mt-1 text-xs text-slate-500">Cached tokens are included in the input total above.</p></div>
+            <dl className="flex flex-wrap gap-x-8 gap-y-3">
+              <div><dt className="text-xs text-slate-500">Cached input</dt><dd className="mt-1 font-semibold tabular-nums text-emerald-700">{cacheTokens(summary!.cached_input_tokens, !cacheIncomplete)}</dd></div>
+              <div><dt className="text-xs text-slate-500">Uncached input</dt><dd className="mt-1 font-semibold tabular-nums text-slate-900">{cacheTokens(summary!.uncached_input_tokens, !cacheIncomplete)}</dd></div>
+            </dl>
+          </div>
+          {cacheIncomplete && <p className="mt-3 text-xs text-slate-500">Cache counts are unavailable for some replies, including activity before cache tracking began. Reported portions are shown with “+”.</p>}
+        </div>
       </>}
 
       <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
@@ -89,13 +100,15 @@ export function AiUsagePage() {
             <table className="w-full min-w-[800px] text-sm">
               <caption className="sr-only">AI replies with date, channel, status, completion time and token usage</caption>
               <thead className="border-b border-slate-100 bg-slate-50/70 text-left text-xs font-medium text-slate-500"><tr>{['Date & time', 'Channel', 'Status', 'Time taken', 'Input tokens', 'Output tokens'].map(label => <th key={label} scope="col" className="px-5 py-3 font-medium">{label}</th>)}</tr></thead>
-              <tbody className="divide-y divide-slate-100">{data.items.map(reply => <tr key={reply.id} className="hover:bg-slate-50/60"><td className="px-5 py-4"><Started reply={reply} timezone={timezone} /></td><td className="px-5 py-4"><Channel channel={reply.channel} /></td><td className="px-5 py-4"><Status status={reply.status} /></td><td className="px-5 py-4 whitespace-nowrap tabular-nums text-slate-700">{reply.status === 'awaiting_send' ? 'Pending' : usageSeconds(reply.duration_ms)}</td><td className="px-5 py-4 tabular-nums text-slate-700">{usageTokens(reply.input_tokens, reply.tokens_complete)}</td><td className="px-5 py-4 tabular-nums text-slate-700">{usageTokens(reply.output_tokens, reply.tokens_complete)}</td></tr>)}</tbody>
+              <tbody className="divide-y divide-slate-100">{data.items.map(reply => <tr key={reply.id} className="hover:bg-slate-50/60"><td className="px-5 py-4"><Started reply={reply} timezone={timezone} /></td><td className="px-5 py-4"><Channel channel={reply.channel} /></td><td className="px-5 py-4"><Status status={reply.status} /></td><td className="px-5 py-4 whitespace-nowrap tabular-nums text-slate-700">{reply.status === 'awaiting_send' ? 'Pending' : usageSeconds(reply.duration_ms)}</td><td className="px-5 py-4 tabular-nums text-slate-700">{usageTokens(reply.input_tokens, reply.tokens_complete)}<div className="mt-1 space-y-0.5 text-xs text-slate-500"><div>Cached: {cacheTokens(reply.cached_input_tokens)}</div><div>Uncached: {cacheTokens(reply.uncached_input_tokens)}</div></div></td><td className="px-5 py-4 tabular-nums text-slate-700">{usageTokens(reply.output_tokens, reply.tokens_complete)}</td></tr>)}</tbody>
             </table>
           </div>
           <ul className="divide-y divide-slate-100 md:hidden">{data.items.map(reply => <li key={reply.id} className="space-y-4 p-4"><div className="flex flex-wrap items-center justify-between gap-2"><Channel channel={reply.channel} /><Status status={reply.status} /></div><Started reply={reply} timezone={timezone} /><dl className="grid grid-cols-3 gap-3">{[
             ['Time taken', reply.status === 'awaiting_send' ? 'Pending' : usageSeconds(reply.duration_ms)],
             ['Input tokens', usageTokens(reply.input_tokens, reply.tokens_complete)],
             ['Output tokens', usageTokens(reply.output_tokens, reply.tokens_complete)],
+            ['Cached input', cacheTokens(reply.cached_input_tokens)],
+            ['Uncached input', cacheTokens(reply.uncached_input_tokens)],
           ].map(([label, value]) => <div key={label}><dt className="text-xs text-slate-500">{label}</dt><dd className="mt-1 text-sm font-medium tabular-nums text-slate-800">{value}</dd></div>)}</dl></li>)}</ul>
           {data.total_count > 0 && <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-4 py-3 sm:px-5"><p className="text-xs text-slate-500">{offset + 1}–{offset + data.items.length} of {data.total_count.toLocaleString('en-IN')} replies</p><div className="flex items-center gap-2"><button type="button" className={button} disabled={offset === 0 || isFetching} onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}><ChevronLeft aria-hidden="true" className="h-4 w-4" />Previous</button><button type="button" className={button} disabled={data.next_offset === null || isFetching} onClick={() => setOffset(data.next_offset ?? offset)}>Next<ChevronRight aria-hidden="true" className="h-4 w-4" /></button></div></div>}
         </>}

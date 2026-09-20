@@ -17,3 +17,8 @@ export function calendarDate(daysBack = 0, timeZone?: string, now = new Date()):
   date.setUTCDate(date.getUTCDate() - daysBack)
   return date.toISOString().slice(0, 10)
 }
+
+/** Older deployments and historical records cannot establish cache usage. */
+export function cacheTokens(value: number | null | undefined, complete = true): string {
+  return value == null ? 'Not reported' : usageTokens(value, complete)
+}

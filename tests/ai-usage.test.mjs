@@ -5,7 +5,7 @@ import ts from 'typescript'
 
 const source = readFileSync(new URL('../web/src/utils/aiUsage.ts', import.meta.url), 'utf8')
 const output = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText
-const { calendarDate, usageTokens, usageSeconds } = await import(`data:text/javascript;base64,${Buffer.from(output).toString('base64')}`)
+const { cacheTokens, calendarDate, usageTokens, usageSeconds } = await import(`data:text/javascript;base64,${Buffer.from(output).toString('base64')}`)
 
 test('unknown and partial provider counts are distinct from reported zero', () => {
   assert.equal(usageTokens(0, false), 'Not reported')
@@ -28,4 +28,12 @@ test('date presets follow business midnight, not the browser timezone', () => {
 test('calendar subtraction works across leap days and daylight saving', () => {
   assert.equal(calendarDate(1, 'UTC', new Date('2024-03-01T00:00Z')), '2024-02-29')
   assert.equal(calendarDate(1, 'America/New_York', new Date('2026-03-09T04:30Z')), '2026-03-08')
+})
+
+test('cache usage preserves historical unknowns and reported zero', () => {
+  assert.equal(cacheTokens(undefined), 'Not reported')
+  assert.equal(cacheTokens(null), 'Not reported')
+  assert.equal(cacheTokens(0), '0')
+  assert.equal(cacheTokens(5000), '5,000')
+  assert.equal(cacheTokens(5000, false), '5,000+')
 })
