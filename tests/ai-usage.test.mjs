@@ -5,7 +5,7 @@ import ts from 'typescript'
 
 const source = readFileSync(new URL('../web/src/utils/aiUsage.ts', import.meta.url), 'utf8')
 const output = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText
-const { cacheTokens, calendarDate, usageTokens, usageSeconds } = await import(`data:text/javascript;base64,${Buffer.from(output).toString('base64')}`)
+const { cacheTokens, cacheRequestRate, replyCacheStatus, calendarDate, usageTokens, usageSeconds } = await import(`data:text/javascript;base64,${Buffer.from(output).toString('base64')}`)
 
 test('unknown and partial provider counts are distinct from reported zero', () => {
   assert.equal(usageTokens(0, false), 'Not reported')
@@ -36,4 +36,21 @@ test('cache usage preserves historical unknowns and reported zero', () => {
   assert.equal(cacheTokens(0), '0')
   assert.equal(cacheTokens(5000), '5,000')
   assert.equal(cacheTokens(5000, false), '5,000+')
+})
+
+test('reply cache status separates cache reads, misses, and historical unknowns', () => {
+  assert.equal(replyCacheStatus(5000), 'Used cache')
+  assert.equal(replyCacheStatus(1), 'Used cache')
+  assert.equal(replyCacheStatus(0), 'No cache used')
+  assert.equal(replyCacheStatus(null), 'Not reported')
+  assert.equal(replyCacheStatus(undefined), 'Not reported')
+})
+
+test('cache request rate uses reported requests and handles empty or older APIs', () => {
+  assert.equal(cacheRequestRate(2, 1), '66.7%')
+  assert.equal(cacheRequestRate(0, 3), '0%')
+  assert.equal(cacheRequestRate(3, 0), '100%')
+  assert.equal(cacheRequestRate(0, 0), 'Not reported')
+  assert.equal(cacheRequestRate(undefined, undefined), 'Not reported')
+  assert.equal(cacheRequestRate(2, undefined), 'Not reported')
 })

@@ -29,6 +29,8 @@ export interface AiUsageResponse {
     cached_input_tokens?: number
     uncached_input_tokens?: number
     cache_incomplete_replies?: number
+    cached_replies?: number
+    uncached_replies?: number
     incomplete_replies: number
     average_duration_ms: number | null
     failed_replies: number

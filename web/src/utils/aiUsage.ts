@@ -22,3 +22,15 @@ export function calendarDate(daysBack = 0, timeZone?: string, now = new Date()):
 export function cacheTokens(value: number | null | undefined, complete = true): string {
   return value == null ? 'Not reported' : usageTokens(value, complete)
 }
+
+/** A reply can contain both cached and fresh input across several model calls. */
+export function replyCacheStatus(cachedInput: number | null | undefined): 'Used cache' | 'No cache used' | 'Not reported' {
+  if (cachedInput == null) return 'Not reported'
+  return cachedInput > 0 ? 'Used cache' : 'No cache used'
+}
+
+/** Unknown requests are not cache misses and must not lower the hit rate. */
+export function cacheRequestRate(cached: number | undefined, uncached: number | undefined): string {
+  if (cached == null || uncached == null || cached + uncached === 0) return 'Not reported'
+  return `${(cached / (cached + uncached) * 100).toLocaleString('en-IN', { maximumFractionDigits: 1 })}%`
+}
