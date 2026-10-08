@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, ExternalLink } from 'lucide-react'
 import { superAdminApi } from '@/api/superAdmin'
 import { businessError, portalUrl } from '@/utils/business'
+import { BusinessAISettings } from '@/features/ai-settings/BusinessAISettings'
 import { BusinessModulesSettings } from '@/features/business-modules/BusinessModulesSettings'
 
 export function SuperAdminBusinessDetail() {
@@ -84,6 +85,7 @@ export function SuperAdminBusinessDetail() {
               </dd>
             </div>
           </dl>
+          <BusinessAISettings key={`ai-${slug}`} slug={slug} />
           <BusinessModulesSettings key={slug} slug={slug} />
           <div className="space-y-4 rounded-xl border border-gray-800 bg-gray-900 p-6">
             <h2 className="font-semibold text-white">Access and plan</h2>

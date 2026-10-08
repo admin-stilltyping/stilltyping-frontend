@@ -1,7 +1,7 @@
 import apiClient from './client'
 
 export interface GeminiIntegration {
-  source: 'business' | 'platform' | 'unconfigured'
+  source: 'business' | 'platform' | 'unconfigured' | 'super_admin'
   key_last_four: string | null
   updated_at: string | null
   can_update: boolean
