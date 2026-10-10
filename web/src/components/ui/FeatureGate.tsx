@@ -1,7 +1,7 @@
 import { Lock } from 'lucide-react'
 import { useEntitlementStore } from '@/store/entitlementStore'
 import { useBusinessSession } from '@/components/auth/BusinessSession'
-import { flagEnabled, type FlagKey } from '@nivaso/types'
+import { flagEnabled, type FlagKey } from '@stilltyping/types'
 import { InlineLoading } from './LoadingState'
 
 interface FeatureGateProps {

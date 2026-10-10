@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ExternalLink, Save, Trash2 } from 'lucide-react'
-import { Button, Input } from '@nivaso/ui'
+import { Button, Input } from '@stilltyping/ui'
 import { channelsApi } from '@/api/channels'
 import type { BusinessChannel, InstagramChannelPayload } from '@/types/channel'
 import { apiError } from '@/utils/apiError'

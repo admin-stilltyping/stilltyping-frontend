@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
-import { validBusinessSlug } from '@nivaso/types'
+import { validBusinessSlug } from '@stilltyping/types'
 import { authApi } from '@/api/auth'
 import { useAuthStore } from '@/store/authStore'
 import { useAppStore } from '@/store/appStore'
@@ -68,7 +68,7 @@ export function LoginPage() {
             <LogIn className="h-6 w-6 text-white" />
           </div>
           <h1 className="break-words text-2xl font-bold text-gray-900">
-            {branding.data?.name ?? 'Nivaso'}
+            {branding.data?.name ?? 'Stilltyping'}
           </h1>
           <p className="mt-1 text-sm text-gray-500">Sign in to your business portal</p>
           {hostSlug && (

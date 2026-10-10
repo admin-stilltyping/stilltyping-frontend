@@ -1,5 +1,5 @@
 import apiClient from './client'
-import type { Entitlements } from '@nivaso/types'
+import type { Entitlements } from '@stilltyping/types'
 
 export type FeatureRequestStatus = 'pending' | 'approved' | 'denied'
 

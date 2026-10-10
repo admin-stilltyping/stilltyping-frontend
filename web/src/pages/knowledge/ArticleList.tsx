@@ -3,13 +3,13 @@ import { BookOpen, Plus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useArticles, useCreateArticle } from '@/hooks/useKnowledge'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
-import { Badge, Button, Input, Select, Textarea, Modal, EmptyState } from '@nivaso/ui'
+import { Badge, Button, Input, Select, Textarea, Modal, EmptyState } from '@stilltyping/ui'
 import { KNOWLEDGE_STATUS_COLORS } from '@/utils/constants'
 import { cn } from '@/utils/cn'
 import { X } from 'lucide-react'
 import type { KnowledgeStatus } from '@/types/knowledge'
 import { useEntitlementStore } from '@/store/entitlementStore'
-import { flagLimit, Flag } from '@nivaso/types'
+import { flagLimit, Flag } from '@stilltyping/types'
 
 const STATUS_TABS: { value: KnowledgeStatus | 'all'; label: string }[] = [
   { value: 'all', label: 'All' },

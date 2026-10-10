@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import type { Entitlements } from '@nivaso/types'
-import { flagEnabled, type FlagKey } from '@nivaso/types'
+import type { Entitlements } from '@stilltyping/types'
+import { flagEnabled, type FlagKey } from '@stilltyping/types'
 
 interface EntitlementState {
   entitlements: Entitlements | null

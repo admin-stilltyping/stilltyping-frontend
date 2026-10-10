@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { Save, Sparkles } from 'lucide-react'
 import { useInstructions, useSetInstructions } from '@/hooks/useInstructions'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
-import { Button } from '@nivaso/ui'
+import { Button } from '@stilltyping/ui'
 import { ErrorState } from '@/components/ui/ErrorState'
 
 export function InstructionsPage() {

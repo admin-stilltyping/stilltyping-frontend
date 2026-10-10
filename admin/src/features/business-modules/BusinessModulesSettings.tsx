@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { ModuleSelection, ModuleSettings } from '@nivaso/types'
+import type { ModuleSelection, ModuleSettings } from '@stilltyping/types'
 import { businessError } from '@/utils/business'
 import { businessModulesApi } from './api'
 

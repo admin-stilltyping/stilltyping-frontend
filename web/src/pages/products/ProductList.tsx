@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useProducts, useCreateProduct } from '@/hooks/useProducts'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
-import { Badge, Button, Input, Select, Textarea, Modal, EmptyState } from '@nivaso/ui'
+import { Badge, Button, Input, Select, Textarea, Modal, EmptyState } from '@stilltyping/ui'
 import { PRODUCT_STATUS_COLORS } from '@/utils/constants'
 import { formatCurrency } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
@@ -14,7 +14,7 @@ import { useFieldDefinitions } from '@/features/custom-fields/useFieldDefinition
 import type { CustomFieldsValue } from '@/features/custom-fields/types'
 import type { ProductStatus, CreateProductPayload } from '@/types/product'
 import { useEntitlementStore } from '@/store/entitlementStore'
-import { flagLimit, Flag } from '@nivaso/types'
+import { flagLimit, Flag } from '@stilltyping/types'
 import { apiError } from '@/utils/apiError'
 
 const STATUS_TABS: { value: ProductStatus | 'all'; label: string }[] = [

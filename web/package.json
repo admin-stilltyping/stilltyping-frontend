@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
-    "@nivaso/types": "*",
-    "@nivaso/ui": "*",
+    "@stilltyping/types": "*",
+    "@stilltyping/ui": "*",
     "@tanstack/react-query": "^5.62.7",
     "axios": "^1.7.9",
     "clsx": "^2.1.1",

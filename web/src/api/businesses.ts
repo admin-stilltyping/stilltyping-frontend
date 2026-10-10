@@ -1,5 +1,5 @@
 import apiClient from './client'
-import type { Business, BusinessRecord, UpdateBusinessPayload } from '@nivaso/types'
+import type { Business, BusinessRecord, UpdateBusinessPayload } from '@stilltyping/types'
 
 function asBusiness(record: BusinessRecord): Business {
   return { ...record, id: record._id, settings: {} }

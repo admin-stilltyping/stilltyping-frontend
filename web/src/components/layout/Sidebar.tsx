@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { cn } from '@/utils/cn'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
 import { useEntitlementStore } from '@/store/entitlementStore'
-import { flagEnabled, type FlagKey } from '@nivaso/types'
+import { flagEnabled, type FlagKey } from '@stilltyping/types'
 import { navGroups } from './nav-config'
 import { useBusinessSession } from '@/components/auth/BusinessSession'
 

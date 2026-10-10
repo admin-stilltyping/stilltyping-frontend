@@ -1,5 +1,5 @@
 {
-  "name": "nivaso-frontend",
+  "name": "stilltyping-frontend",
   "private": true,
   "workspaces": [
     "web",

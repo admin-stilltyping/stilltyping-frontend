@@ -22,10 +22,10 @@
 }
 
 /* ------------------------------------------------------------------ *
- * Operator-console dashboard theme (scoped to .nivaso-dash so it
+ * Operator-console dashboard theme (scoped to .stilltyping-dash so it
  * never touches the light admin shell that shares this stylesheet).
  * ------------------------------------------------------------------ */
-.nivaso-dash {
+.stilltyping-dash {
   color-scheme: dark;
   /* faint dotted plane — reads as a telemetry grid, not decoration */
   background-color: #0b0d13;
@@ -34,7 +34,7 @@
   background-position: -1px -1px;
 }
 
-.nivaso-dash ::selection {
+.stilltyping-dash ::selection {
   background: rgba(139, 123, 240, 0.35);
 }
 
@@ -82,22 +82,22 @@
 }
 
 /* slim custom scrollbars inside dark panels */
-.nivaso-dash .dash-scroll::-webkit-scrollbar {
+.stilltyping-dash .dash-scroll::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-.nivaso-dash .dash-scroll::-webkit-scrollbar-thumb {
+.stilltyping-dash .dash-scroll::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
 }
-.nivaso-dash .dash-scroll::-webkit-scrollbar-track {
+.stilltyping-dash .dash-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nivaso-dash *,
-  .nivaso-dash *::before,
-  .nivaso-dash *::after {
+  .stilltyping-dash *,
+  .stilltyping-dash *::before,
+  .stilltyping-dash *::after {
     animation: none !important;
     transition: none !important;
   }

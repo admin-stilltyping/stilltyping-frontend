@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { BookOpen, Save } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Spinner } from "@nivaso/ui";
+import { Button, Spinner } from "@stilltyping/ui";
 import { useBusinessSession } from "@/components/auth/BusinessSession";
 import { knowledgeDocumentApi, knowledgeError } from "./api";
 

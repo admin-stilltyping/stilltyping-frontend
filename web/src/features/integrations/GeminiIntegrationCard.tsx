@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ExternalLink, Save, Sparkles } from 'lucide-react'
-import { Button, Input } from '@nivaso/ui'
+import { Button, Input } from '@stilltyping/ui'
 import { geminiApi } from '@/api/gemini'
 import { apiError } from '@/utils/apiError'
 

@@ -1,4 +1,4 @@
-import { Button, Input, Select } from '@nivaso/ui'
+import { Button, Input, Select } from '@stilltyping/ui'
 import { apiError } from '@/utils/apiError'
 import type { Contact, Platform } from './types'
 

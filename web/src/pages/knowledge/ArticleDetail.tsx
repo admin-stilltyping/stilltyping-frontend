@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Pencil, X } from 'lucide-react'
 import { useArticle, useUpdateArticle } from '@/hooks/useKnowledge'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
-import { Badge, Button, Input, Textarea, Spinner } from '@nivaso/ui'
+import { Badge, Button, Input, Textarea, Spinner } from '@stilltyping/ui'
 import { KNOWLEDGE_STATUS_COLORS } from '@/utils/constants'
 import type { KnowledgeStatus } from '@/types/knowledge'
 

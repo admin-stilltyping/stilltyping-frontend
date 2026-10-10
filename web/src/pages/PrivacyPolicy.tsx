@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Shield, ArrowLeft } from 'lucide-react'
 
-const LAST_UPDATED = 'September 9, 2026'
+const LAST_UPDATED = 'October 10, 2026'
 
 type Section = { id: string; title: string; body: React.ReactNode }
 
@@ -11,11 +11,11 @@ const SECTIONS: Section[] = [
     title: '1. Overview',
     body: (
       <p>
-        Nivaso ("Nivaso", "we", "us", or "our") provides an AI-powered customer
+        Stilltyping ("Stilltyping", "we", "us", or "our") provides an AI-powered customer
         support and business operations platform. This Privacy Policy explains
         what information we collect, how we use it, and the choices you have. It
         applies to the businesses that use our platform ("Customers") and to the
-        end users who interact with those businesses through Nivaso ("End Users").
+        end users who interact with those businesses through Stilltyping ("End Users").
       </p>
     ),
   },
@@ -71,7 +71,7 @@ const SECTIONS: Section[] = [
     title: '4. AI Processing',
     body: (
       <p>
-        Nivaso uses third-party large language model providers to generate agent
+        Stilltyping uses third-party large language model providers to generate agent
         responses. Conversation content may be transmitted to these providers
         solely to produce a response. We do not permit these providers to use
         Customer or End User content to train their models, and we take steps to
@@ -150,10 +150,10 @@ const SECTIONS: Section[] = [
         If you have questions about this Privacy Policy or our data practices,
         contact us at{' '}
         <a
-          href="mailto:privacy@nivaso.com"
+          href="mailto:support@stilltyping.in"
           className="font-medium text-blue-600 hover:text-blue-700"
         >
-          privacy@nivaso.com
+          support@stilltyping.in
         </a>
         .
       </p>

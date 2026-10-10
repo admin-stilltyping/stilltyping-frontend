@@ -8,14 +8,14 @@ The standalone and iframe views share the same conversation component. It suppor
 
 ## Visual direction
 
-The chat uses the existing Nivaso blue (#2858dc), ink (#182538), muted text (#647185), white (#ffffff), a pale canvas (#edf2f8), and light dividers (#e4eaf1). System sans-serif keeps the widget small and consistent with the portal. A business initial/name anchors the header; left-aligned assistant replies and right-aligned visitor messages make turn ownership clear. The public interface gives the conversation most of the space, without portal navigation or model controls. CSS is scoped to `.public-chat`; the compact layout fills its iframe and mobile viewport.
+The chat uses the existing Stilltyping blue (#2858dc), ink (#182538), muted text (#647185), white (#ffffff), a pale canvas (#edf2f8), and light dividers (#e4eaf1). System sans-serif keeps the widget small and consistent with the portal. A business initial/name anchors the header; left-aligned assistant replies and right-aligned visitor messages make turn ownership clear. The public interface gives the conversation most of the space, without portal navigation or model controls. CSS is scoped to `.public-chat`; the compact layout fills its iframe and mobile viewport.
 
 ## Local example
 
-Open `http://nivaso-demo.localhost:5173/c/nivaso-demo`. To test embedding on a separate local site:
+Open `http://stilltyping-demo.localhost:5173/c/stilltyping-demo`. To test embedding on a separate local site:
 
 ```html
-<script src="http://localhost:5173/chat-widget.js" data-business="nivaso-demo" defer></script>
+<script src="http://localhost:5173/chat-widget.js" data-business="stilltyping-demo" defer></script>
 ```
 
 Use HTTPS URLs from the deployed portal on a real website. `/web/*` must reach the backend, `/c/*` must use the SPA fallback, and the chat page must allow framing by the host website. See backend `src/public_chat/README.md` for the visitor API, limits and deployment details.

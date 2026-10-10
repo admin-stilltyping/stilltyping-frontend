@@ -1,4 +1,4 @@
-import { tenantSlugFromHostname } from '@nivaso/types'
+import { tenantSlugFromHostname } from '@stilltyping/types'
 
 export function currentSubdomainSlug(): string | null {
   return tenantSlugFromHostname(

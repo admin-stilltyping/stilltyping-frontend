@@ -1,4 +1,4 @@
-# Nivaso frontend review and recommended next step
+# Stilltyping frontend review and recommended next step
 
 Reviewed: 15 September 2026.
 
