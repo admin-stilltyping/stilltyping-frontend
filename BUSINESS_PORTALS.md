@@ -33,7 +33,35 @@ subdomains, and reverse-proxy routes for `/auth`, `/admin` and `/web`. Set
 `VITE_WEB_URL=https://example.com` for admin and
 `VITE_TENANT_BASE_DOMAIN=example.com` for web. Do not include secrets in VITE variables.
 
-### Vercel production
+### Netlify business portal
+
+Connect `admin-stilltyping/stilltyping-frontend` to Netlify in the
+`admin-stilltyping` team and deploy the `main` branch. Use the repository root
+as the base directory so npm installs the shared workspace packages. The root
+`netlify.toml` builds with `node scripts/build-netlify.mjs web` and publishes
+`web/dist`; do not upload local build archives.
+
+Use `app.stilltyping.in` for the main portal and add each supported tenant
+hostname (including `dental.stilltyping.in`) without redirecting it to the main
+hostname. The application uses the hostname to resolve the tenant. Automatic
+support for new tenant subdomains requires wildcard domain routing in Netlify
+as well as wildcard DNS and TLS; a DNS wildcard alone is insufficient.
+
+The build script sets the Stilltyping domain URLs, clears development API keys,
+and generates API proxy rules before the SPA fallback. It preserves the
+existing backend URL from `web/vercel.json`. `/privacy` redirects to the public
+policy at `https://stilltyping.in/privacy`. Keep backend credentials in the
+backend, never in frontend build variables.
+
+The API still runs separately at `https://stilltyping-backend.vercel.app`.
+On 2026-10-10 its health endpoint returned `402 DEPLOYMENT_DISABLED`; a frontend
+deployment cannot restore login, chat, or webhooks while that backend is paused.
+
+The displayed brand, package names, icons, and public links use Stilltyping.
+Existing browser storage keys and embedded-widget message identifiers retain
+their old technical names for compatibility with saved sessions and embeds.
+
+### Existing Vercel projects
 
 Deploy this repository as two Vite projects, with root directories `web` and
 `admin`, build command `npm run build`, and output directory `dist`. Include source
