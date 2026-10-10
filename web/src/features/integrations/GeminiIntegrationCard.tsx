@@ -26,6 +26,8 @@ export function GeminiIntegrationCard({ slug }: { slug: string }) {
       qc.setQueryData(queryKey, result)
     },
   })
+  if (config.data?.source === 'super_admin') return <section className="rounded-xl border border-gray-200 bg-white p-5"><h3 className="text-sm font-semibold text-gray-800">AI configuration</h3><p className="mt-2 text-sm text-gray-600">Your platform administrator manages this business’s AI models and API keys.</p></section>
+
   const ownKey = config.data?.source === 'business'
   const status = ownKey ? 'Your key saved' : config.data?.source === 'platform'
     ? 'Using platform key' : 'Not configured'

@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { BookOpen, Building2, Inbox, ShieldCheck, LayoutList, Clock, LogOut, Bot, UserCheck, Gauge } from 'lucide-react'
+import { BookOpen, Building2, Inbox, ShieldCheck, LayoutList, Clock, LogOut, Bot, UserCheck, Gauge, Timer } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { useAuthStore } from '@/store/authStore'
 
@@ -9,6 +9,7 @@ const nav = [
   { to: '/requests',   label: 'Feature Requests', icon: Inbox },
   { to: '/plans',      label: 'Plan Defaults',    icon: LayoutList },
   { to: '/ai-usage',   label: 'AI Usage',         icon: Gauge },
+  { to: '/request-timing', label: 'Request Timing', icon: Timer },
   { to: '/audit',      label: 'Audit Log',        icon: Clock },
   { to: '/playbook',   label: 'AI Playbook',      icon: BookOpen },
   { to: '/chat',       label: 'Platform AI',      icon: Bot },

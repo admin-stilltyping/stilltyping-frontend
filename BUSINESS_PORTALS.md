@@ -83,3 +83,15 @@ The frontend tests cover DNS validation, reserved names, host boundaries, portal
 URLs, token expiry, and keeping failed sign-ins on the form. Responses from an old
 session cannot sign out a newer session. Backend tests cover persistence, credentials, duplicate slugs, account lockout
 and tenant/role isolation.
+
+## Business AI configuration
+
+The business detail screen in the super-admin app contains **AI models and API keys**.
+It supports Gemini/DeepSeek LLMs and Gemini/DeepInfra Qwen embeddings independently.
+API keys are password inputs and saved keys are never returned in full. Leave a key
+blank to retain the same provider's credential. Embedding changes require an explicit
+rebuild checkbox and become active only when backend preparation succeeds.
+
+Deploy backend migration 020 and its AI settings endpoints before this frontend.
+Businesses with super-admin-managed AI settings see a read-only notice instead of
+an editable Gemini key in their Integrations screen.
