@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Save } from 'lucide-react'
 import { useTicket, useUpdateTicket } from '@/hooks/useSupport'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
-import { Badge, Button, Select, Textarea } from '@nivaso/ui'
+import { Badge, Button, Select, Textarea } from '@stilltyping/ui'
 import type { TicketStatus, UpdateTicketPayload } from '@/types/support'
 import { ErrorState } from '@/components/ui/ErrorState'
 

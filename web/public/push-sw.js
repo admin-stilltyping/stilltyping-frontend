@@ -30,7 +30,7 @@ self.addEventListener('push', (event) => {
     if (!payload || !device?.id || payload.subscription_id !== device.id) return
     await self.registration.showNotification(payload.title || 'New business activity', {
       body: payload.body || 'Open your business portal to view it.',
-      icon: '/icons/icon-192.png', badge: '/icons/icon-192.png',
+      icon: '/stilltyping.png', badge: '/stilltyping.png',
       tag: payload.tag, renotify: false,
       data: { url: notificationPath(payload.url), id: payload.id },
     })

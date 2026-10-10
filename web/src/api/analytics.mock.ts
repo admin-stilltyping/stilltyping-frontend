@@ -234,7 +234,7 @@ export function buildMockOverview(
   return {
     business: {
       slug,
-      name: titleCase(slug) || 'Nivaso Store',
+      name: titleCase(slug) || 'Stilltyping Store',
       currency: 'INR',
       timezone: 'Asia/Kolkata',
     },

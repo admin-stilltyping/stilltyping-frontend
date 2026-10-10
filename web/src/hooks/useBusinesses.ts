@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { businessesApi } from '@/api/businesses'
-import type { UpdateBusinessPayload } from '@nivaso/types'
+import type { UpdateBusinessPayload } from '@stilltyping/types'
 
 export function useBusinesses(enabled = true) {
   return useQuery({ queryKey: ['businesses'], queryFn: businessesApi.list, enabled })

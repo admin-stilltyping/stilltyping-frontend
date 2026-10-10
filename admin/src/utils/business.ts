@@ -1,4 +1,4 @@
-import { businessPortalUrl } from '@nivaso/types'
+import { businessPortalUrl } from '@stilltyping/types'
 import { isAxiosError } from 'axios'
 
 export function portalUrl(slug: string): string {

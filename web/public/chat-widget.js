@@ -1,4 +1,4 @@
-/* Nivaso website chat. No dependencies, cookies, or admin credentials. */
+/* Stilltyping website chat. No dependencies, cookies, or admin credentials. */
 (() => {
   const script = document.currentScript
   const slug = script?.getAttribute('data-business')

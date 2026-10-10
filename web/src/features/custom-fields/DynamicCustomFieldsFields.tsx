@@ -1,5 +1,5 @@
 import type { FieldErrors, FieldValues, Path, UseFormRegister } from 'react-hook-form'
-import { Input, Select } from '@nivaso/ui'
+import { Input, Select } from '@stilltyping/ui'
 import type { FieldDefinition } from './types'
 
 interface DynamicCustomFieldsFieldsProps<T extends FieldValues> {

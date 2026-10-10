@@ -1,12 +1,12 @@
 import { PageSkeleton } from '@/components/ui/LoadingState'
 import { useState } from 'react'
 import { Settings2, Plus, Pencil, Trash2 } from 'lucide-react'
-import { Badge, Button, Input, Select, Modal, EmptyState } from '@nivaso/ui'
+import { Badge, Button, Input, Select, Modal, EmptyState } from '@stilltyping/ui'
 import { FeatureGate } from '@/components/ui/FeatureGate'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
 import { cn } from '@/utils/cn'
 import { apiError } from '@/utils/apiError'
-import { Flag, flagEnabled, type FlagKey } from '@nivaso/types'
+import { Flag, flagEnabled, type FlagKey } from '@stilltyping/types'
 import { useEntitlementStore } from '@/store/entitlementStore'
 import {
   useFieldDefinitions,

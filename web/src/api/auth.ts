@@ -1,5 +1,5 @@
 import apiClient from './client'
-import type { BusinessBranding } from '@nivaso/types'
+import type { BusinessBranding } from '@stilltyping/types'
 import type { BusinessSession } from '@/components/auth/BusinessSession'
 
 export interface LoginResponse {

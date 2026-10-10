@@ -1,8 +1,8 @@
 // Mirrors app/entitlements/flags.py DASHBOARD_WIDGET_CATALOG — keep in sync.
 // Keys are stable identifiers persisted in a business's saved widget selection;
 // never rename one without a migration to rewrite existing rows.
-import { Flag } from '@nivaso/types'
-import type { FlagKey } from '@nivaso/types'
+import { Flag } from '@stilltyping/types'
+import type { FlagKey } from '@stilltyping/types'
 
 export type WidgetType = 'stat' | 'chart' | 'bar' | 'donut' | 'funnel' | 'list' | 'gauge'
 

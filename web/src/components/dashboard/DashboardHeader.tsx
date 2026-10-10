@@ -42,7 +42,7 @@ export function DashboardHeader({
           </span>
           <div className="leading-tight">
             <p className="font-display text-base font-semibold text-dash-ink">{business.name}</p>
-            <p className="font-mono text-[10px] tracking-wide text-dash-ink3">{business.slug}.nivaso.ai</p>
+            <p className="font-mono text-[10px] tracking-wide text-dash-ink3">{business.slug}.stilltyping.in</p>
           </div>
         </div>
 

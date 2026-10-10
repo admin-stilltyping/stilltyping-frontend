@@ -17,7 +17,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import { Flag, type FlagKey } from '@nivaso/types'
+import { Flag, type FlagKey } from '@stilltyping/types'
 
 export interface NavItem {
   to: string

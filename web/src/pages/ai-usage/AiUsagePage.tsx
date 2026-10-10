@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Activity, ArrowDownLeft, ArrowUpRight, Bot, Check, ChevronLeft, ChevronRight, Clock3, Globe, Instagram, MessageCircle, RefreshCw, Send, type LucideIcon } from 'lucide-react'
-import { EmptyState } from '@nivaso/ui'
+import { EmptyState } from '@stilltyping/ui'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
 import { useAiUsage } from '@/hooks/useAiUsage'
 import { useBusinessSession } from '@/components/auth/BusinessSession'

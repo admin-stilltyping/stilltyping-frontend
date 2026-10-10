@@ -1,4 +1,4 @@
-import type { ModuleSelection, ModuleSettings } from '@nivaso/types'
+import type { ModuleSelection, ModuleSettings } from '@stilltyping/types'
 import { superAdminClient } from '@/api/superAdmin'
 
 export const businessModulesApi = {

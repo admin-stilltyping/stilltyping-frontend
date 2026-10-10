@@ -49,7 +49,7 @@ export function TenantDashboard() {
 
   if (isLoading || !data) {
     return (
-      <div className="nivaso-dash flex min-h-screen items-center justify-center text-dash-ink">
+      <div className="stilltyping-dash flex min-h-screen items-center justify-center text-dash-ink">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-dash-violet/30 border-t-dash-violet" />
           <p className="font-mono text-xs uppercase tracking-widest text-dash-ink3">Loading console…</p>
@@ -62,7 +62,7 @@ export function TenantDashboard() {
   const cur = business.currency
 
   return (
-    <div className="nivaso-dash min-h-screen text-dash-ink">
+    <div className="stilltyping-dash min-h-screen text-dash-ink">
       <DashboardHeader business={business} range={range} onRange={setRange} />
 
       <main className="mx-auto max-w-[1400px] animate-dash-rise space-y-8 px-4 py-6 sm:px-6">
@@ -153,9 +153,9 @@ export function TenantDashboard() {
 
         <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-dash-line pt-4 text-xs text-dash-ink3">
           <span className="font-mono">
-            {business.slug}.nivaso.ai · updated {new Date(data.generatedAt).toLocaleTimeString()}
+            {business.slug}.stilltyping.in · updated {new Date(data.generatedAt).toLocaleTimeString()}
           </span>
-          <span>Nivaso — AI sales &amp; support</span>
+          <span>Stilltyping — AI sales &amp; support</span>
         </footer>
       </main>
     </div>

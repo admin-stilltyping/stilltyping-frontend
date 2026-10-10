@@ -185,7 +185,7 @@ function Chat({ slug, embedded }: { slug: string; embedded: boolean }) {
             <button type="submit" disabled={blocked || !draft.trim()} aria-label="Send message"><ArrowUp size={21} /></button>
           </form>
           <p>AI can make mistakes. Chats are saved with the business.</p>
-          <span className="public-chat__powered">Powered by <strong>Nivaso</strong></span>
+          <span className="public-chat__powered">Powered by <strong>Stilltyping</strong></span>
         </footer>
       </section>
     </main>

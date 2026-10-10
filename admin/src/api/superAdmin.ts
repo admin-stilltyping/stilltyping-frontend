@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { BusinessRecord, CreatedBusiness } from '@nivaso/types'
+import type { BusinessRecord, CreatedBusiness } from '@stilltyping/types'
 import type { SuperAdminBusiness, FeatureRequest, BusinessRule } from '@/types/featureRequest'
 import { useAuthStore } from '@/store/authStore'
 

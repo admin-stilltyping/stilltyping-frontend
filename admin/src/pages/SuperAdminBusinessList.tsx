@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { ChevronRight, Plus, X, ShieldCheck } from 'lucide-react'
-import { validBusinessSlug, type CreatedBusiness } from '@nivaso/types'
+import { validBusinessSlug, type CreatedBusiness } from '@stilltyping/types'
 import { superAdminApi } from '@/api/superAdmin'
 import { businessError, portalUrl } from '@/utils/business'
 

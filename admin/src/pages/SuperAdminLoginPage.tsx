@@ -139,13 +139,13 @@ export function SuperAdminLoginPage() {
         </form>
 
         <p className="mt-6 text-center text-xs text-gray-600">
-          Nivaso Platform · Super Admin Access
+          Stilltyping Platform · Super Admin Access
         </p>
 
         <div className="mt-4 text-center">
           {/* TODO: cross-app link — the business portal now lives in the separate
               `web` app/deployment. Point this at its real URL once subdomains
-              (e.g. app.nivaso.xyz) are wired up.
+              (e.g. app.stilltyping.in) are wired up.
               Built from VITE_WEB_URL (falls back to the web app's dev port)
               since this route lives in a different Vite app, not this router. */}
           <a

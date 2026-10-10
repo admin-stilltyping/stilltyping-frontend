@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { BusinessRecord } from '@nivaso/types'
+import type { BusinessRecord } from '@stilltyping/types'
 
 export interface BusinessSession {
   username: string

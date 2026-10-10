@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Eye, EyeOff, AlertTriangle, UserPlus } from 'lucide-react'
-import { Input, Select, Button, Spinner } from '@nivaso/ui'
+import { Input, Select, Button, Spinner } from '@stilltyping/ui'
 import { authApi } from '@/api/auth'
 import { listModuleCatalog } from '@/api/moduleCatalog'
 
@@ -106,7 +106,7 @@ export function SignupPage() {
           <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 shadow-md">
             <UserPlus className="h-6 w-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Nivaso</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Stilltyping</h1>
           <p className="mt-1 text-sm text-gray-500">Create your business account</p>
         </div>
 

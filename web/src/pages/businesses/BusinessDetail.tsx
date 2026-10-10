@@ -4,13 +4,13 @@ import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, Save, Cpu } from 'lucide-react'
 import { useBusiness, useUpdateBusiness } from '@/hooks/useBusinesses'
 import { modelsApi } from '@/api/models'
-import { Badge, Button, Input, Textarea, Select, Modal, Spinner } from '@nivaso/ui'
+import { Badge, Button, Input, Textarea, Select, Modal, Spinner } from '@stilltyping/ui'
 import { useEntitlementStore } from '@/store/entitlementStore'
 import { BUSINESS_STATUS_COLORS } from '@/utils/constants'
 import { cn } from '@/utils/cn'
-import type { BusinessStatus } from '@nivaso/types'
+import type { BusinessStatus } from '@stilltyping/types'
 import type { ModelInfo } from '@/types/models'
-import { Flag } from '@nivaso/types'
+import { Flag } from '@stilltyping/types'
 
 const STATUS_OPTIONS: { value: BusinessStatus; label: string }[] = [
   { value: 'active', label: 'Active' },

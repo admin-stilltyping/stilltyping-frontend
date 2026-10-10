@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { CheckCircle2, Clock, XCircle, CircleDashed, Sparkles, AlertTriangle, Lock } from 'lucide-react'
-import { Badge, Button, Spinner } from '@nivaso/ui'
+import { Badge, Button, Spinner } from '@stilltyping/ui'
 import { useTenantSlug } from '@/hooks/useTenantSlug'
 import { listModuleCatalog, type ModuleCatalogEntry } from '@/api/moduleCatalog'
 import { moduleRequestsApi, type FeatureRequest } from '@/api/moduleRequests'
 import { WIDGET_DEPENDENCIES } from '@/config/dashboardWidgets'
-import { Flag, type Plan } from '@nivaso/types'
+import { Flag, type Plan } from '@stilltyping/types'
 
 // These modules are temporarily unavailable in the business portal.
 const UNAVAILABLE_MODULES = new Set<string>([Flag.MODULE_OFFERS, Flag.MODULE_COUPONS])
