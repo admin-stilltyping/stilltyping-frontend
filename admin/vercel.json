@@ -1,11 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/auth/:path*", "destination": "https://stilltyping-backend.vercel.app/auth/:path*" },
-    { "source": "/admin/:path*", "destination": "https://stilltyping-backend.vercel.app/admin/:path*" },
-    { "source": "/super-admin/:path*", "destination": "https://stilltyping-backend.vercel.app/super-admin/:path*" },
-    { "source": "/health", "destination": "https://stilltyping-backend.vercel.app/health" },
-    { "source": "/module-catalog", "destination": "https://stilltyping-backend.vercel.app/module-catalog" },
+    { "source": "/auth/:path*", "destination": "https://stilltyping-backend-six.vercel.app/auth/:path*" },
+    { "source": "/admin/:path*", "destination": "https://stilltyping-backend-six.vercel.app/admin/:path*" },
+    { "source": "/super-admin/:path*", "destination": "https://stilltyping-backend-six.vercel.app/super-admin/:path*" },
+    { "source": "/health", "destination": "https://stilltyping-backend-six.vercel.app/health" },
+    { "source": "/module-catalog", "destination": "https://stilltyping-backend-six.vercel.app/module-catalog" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
