@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Shield, ArrowLeft } from 'lucide-react'
+import { OPERATOR } from '@/config/operator'
 
-const LAST_UPDATED = 'October 10, 2026'
+const LAST_UPDATED = 'November 9, 2026'
 
 type Section = { id: string; title: string; body: React.ReactNode }
 
@@ -12,7 +13,10 @@ const SECTIONS: Section[] = [
     body: (
       <p>
         Stilltyping ("Stilltyping", "we", "us", or "our") provides an AI-powered customer
-        support and business operations platform. This Privacy Policy explains
+        support and business operations platform. Stilltyping is operated by{' '}
+        {OPERATOR.name}, a {OPERATOR.form} (Udyam Registration Number{' '}
+        {OPERATOR.udyam}), which is the Data Fiduciary responsible for the personal
+        data described in this policy. This Privacy Policy explains
         what information we collect, how we use it, and the choices you have. It
         applies to the businesses that use our platform ("Customers") and to the
         end users who interact with those businesses through Stilltyping ("End Users").
@@ -146,17 +150,26 @@ const SECTIONS: Section[] = [
     id: 'contact',
     title: '10. Contact Us',
     body: (
-      <p>
-        If you have questions about this Privacy Policy or our data practices,
-        contact us at{' '}
-        <a
-          href="mailto:support@stilltyping.in"
-          className="font-medium text-blue-600 hover:text-blue-700"
-        >
-          support@stilltyping.in
-        </a>
-        .
-      </p>
+      <>
+        <p>
+          If you have questions about this Privacy Policy or our data practices,
+          contact us at{' '}
+          <a
+            href={`mailto:${OPERATOR.email}`}
+            className="font-medium text-blue-600 hover:text-blue-700"
+          >
+            {OPERATOR.email}
+          </a>
+          , or write to us at the registered address below.
+        </p>
+        <address className="mt-3 not-italic">
+          <span className="font-medium text-gray-900">{OPERATOR.name}</span>
+          <br />
+          Udyam Registration Number {OPERATOR.udyam}
+          <br />
+          {OPERATOR.address}
+        </address>
+      </>
     ),
   },
 ]
@@ -193,13 +206,19 @@ export function PrivacyPolicy() {
         </article>
 
         {/* Footer nav */}
-        <div className="mt-8 text-center">
+        <div className="mt-8 flex items-center justify-center gap-6">
           <Link
             to="/login"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-blue-600"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to sign in
+          </Link>
+          <Link
+            to="/terms"
+            className="text-sm font-medium text-gray-500 transition-colors hover:text-blue-600"
+          >
+            Terms of service
           </Link>
         </div>
       </div>

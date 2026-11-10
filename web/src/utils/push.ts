@@ -1,6 +1,6 @@
 import { pushApi } from '@/api/push'
 
-const storageKey = 'nivaso-push-device'
+const storageKey = 'stilltyping-push-device'
 type Device = { id: string; slug: string }
 
 export function pushSupport(): 'supported' | 'install' | 'unsupported' {
@@ -79,7 +79,7 @@ export async function disablePush(slug: string): Promise<void> {
   const registration = await navigator.serviceWorker.getRegistration('/')
   if (!registration) { localStorage.removeItem(storageKey); return }
   // Persist disabled state before revoking, to suppress already queued alerts.
-  const cache = await caches.open('nivaso-push-device-v1')
+  const cache = await caches.open('stilltyping-push-device-v1')
   await cache.put('/__push_device__', new Response(JSON.stringify({ id: null })))
   const subscription = await registration.pushManager.getSubscription()
   if (subscription) {

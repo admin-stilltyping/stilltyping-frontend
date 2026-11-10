@@ -12,6 +12,6 @@ export const useAppStore = create<AppState>()(
       selectedBusinessSlug: import.meta.env.VITE_DEFAULT_BUSINESS_SLUG ?? '',
       setSelectedBusinessSlug: (slug) => set({ selectedBusinessSlug: slug }),
     }),
-    { name: 'nivaso-app-store' },
+    { name: 'stilltyping-app-store' },
   ),
 )

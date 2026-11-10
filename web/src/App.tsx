@@ -35,6 +35,7 @@ import { ChatTest } from '@/pages/chat/ChatTest'
 import { ChatDemo } from '@/pages/chat/ChatDemo'
 import { CustomerChat } from '@/pages/chat/CustomerChat'
 import { PrivacyPolicy } from '@/pages/PrivacyPolicy'
+import { TermsOfService } from '@/pages/TermsOfService'
 import { PageSkeleton } from '@/components/ui/LoadingState'
 
 const DashboardPage = lazy(() => import('@/features/dashboard/DashboardPage').then((module) => ({ default: module.DashboardPage })))
@@ -53,6 +54,7 @@ export default function App() {
 
           {/* Public — no auth, no admin layout */}
           <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="terms" element={<TermsOfService />} />
 
           {/* Customer-facing chat — one URL per business slug, no admin layout */}
           <Route path="/chat/:slug" element={<CustomerChat />} />

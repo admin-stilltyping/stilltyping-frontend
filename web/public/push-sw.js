@@ -1,5 +1,5 @@
 /* Push only: never cache authenticated pages, API responses, or tokens. */
-const DEVICE_CACHE = 'nivaso-push-device-v1'
+const DEVICE_CACHE = 'stilltyping-push-device-v1'
 const DEVICE_URL = '/__push_device__'
 
 self.addEventListener('install', (event) => event.waitUntil(self.skipWaiting()))

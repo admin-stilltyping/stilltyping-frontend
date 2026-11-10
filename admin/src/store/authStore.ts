@@ -24,6 +24,6 @@ export const useAuthStore = create<AuthState>()(
         set({ token, role, businessSlug: businessSlug ?? null, username: username ?? null }),
       clearAuth: () => set({ token: null, role: null, businessSlug: null, username: null }),
     }),
-    { name: 'nivaso-auth' },
+    { name: 'stilltyping-auth' },
   ),
 )

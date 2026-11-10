@@ -89,7 +89,7 @@ function Chat({ slug, embedded }: { slug: string; embedded: boolean }) {
   useEffect(() => {
     if (!embedded) return
     const close = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') window.parent.postMessage({ type: 'nivaso:close' }, '*')
+      if (event.key === 'Escape') window.parent.postMessage({ type: 'stilltyping:close' }, '*')
     }
     window.addEventListener('keydown', close)
     return () => window.removeEventListener('keydown', close)

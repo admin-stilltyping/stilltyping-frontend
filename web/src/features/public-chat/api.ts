@@ -31,7 +31,7 @@ export const publicChatApi = {
 }
 
 const memory = new Map<string, VisitorSession>()
-const key = (slug: string) => `nivaso-visitor-v1:${slug}`
+const key = (slug: string) => `stilltyping-visitor-v1:${slug}`
 
 export function savedSession(slug: string): VisitorSession | null {
   let value = memory.get(slug) || null

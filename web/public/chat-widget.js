@@ -5,9 +5,9 @@
   if (!script || !slug || !/^[a-z0-9][a-z0-9-]{0,62}$/.test(slug)) return
   const origin = new URL(script.src).origin
   const mount = () => {
-    if (document.getElementById('nivaso-chat-widget')) return
+    if (document.getElementById('stilltyping-chat-widget')) return
     const host = document.createElement('div')
-    host.id = 'nivaso-chat-widget'
+    host.id = 'stilltyping-chat-widget'
     // Reset inherited host-page styling; internal styles live in a shadow root.
     host.style.cssText = 'all:initial;position:fixed;bottom:20px;right:20px;z-index:2147483000;'
     const root = host.attachShadow({ mode: 'open' })
@@ -24,7 +24,7 @@
     `
     const panel = document.createElement('section')
     panel.className = 'panel'
-    panel.id = 'nivaso-chat-panel'
+    panel.id = 'stilltyping-chat-panel'
     panel.hidden = true
     panel.setAttribute('role', 'region')
     panel.setAttribute('aria-label', 'Website chat')
@@ -64,7 +64,7 @@
     close.addEventListener('click', () => toggle(false))
     root.addEventListener('keydown', (event) => { if (event.key === 'Escape') toggle(false) })
     window.addEventListener('message', (event) => {
-      if (event.origin === origin && event.source === frame?.contentWindow && event.data?.type === 'nivaso:close') toggle(false)
+      if (event.origin === origin && event.source === frame?.contentWindow && event.data?.type === 'stilltyping:close') toggle(false)
     })
     root.append(style, panel, launcher)
     document.body.append(host)
